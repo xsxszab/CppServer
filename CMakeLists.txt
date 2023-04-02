@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.4.1)
+
+project(cppserver)
+
+set(CMAKE_CXX_STANDARD 11) 
+set(CMAKE_CXX_STANDARD_REQUIRED True) 
+set(CMAKE_CXX_FLAGS "-g")
+
+include_directories(./include)
+
+aux_source_directory(./src DIR_SRC)
+
+add_executable(server server.cpp ${DIR_SRC})
+add_executable(client client.cpp ${DIR_SRC})
