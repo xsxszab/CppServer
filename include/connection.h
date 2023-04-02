@@ -6,11 +6,13 @@
 class EventLoop;
 class Socket;
 class Channel;
+class Buffer;
 
 class Connection
 {
 private:
     EventLoop *loop;
+    Buffer *buffer;
     Socket *sock;
     Channel *channel;
     std::function<void(Socket *)> deleteConnectionCallBack;
