@@ -10,7 +10,7 @@ class EventLoop;
 class Channel
 {
 private:
-    EventLoop *el;
+    EventLoop *loop;
     int fd;
     uint32_t events;
     uint32_t ready;

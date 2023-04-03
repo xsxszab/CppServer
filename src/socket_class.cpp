@@ -1,7 +1,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/epoll.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <cstring>
 
 #include "inet_address.h"
@@ -51,8 +53,30 @@ int Socket::accept(InetAddress *_addr)
     struct sockaddr_in addr;
     socklen_t addr_len = sizeof(addr);
     memset(&addr, '\0', sizeof(addr));
-    int clnt_fd = ::accept(fd, (sockaddr *)&addr, &addr_len);
-    errif(clnt_fd == -1, "socket accept error");
+    int clnt_fd;
+    if (fcntl(fd, F_GETFL) & O_NONBLOCK)
+    {
+        while (true)
+        {
+            clnt_fd = ::accept(fd, (sockaddr *)&addr, &addr_len);
+            if (clnt_fd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+            {
+                continue;
+            }
+            else if (clnt_fd == -1)
+            {
+                errif(true, "socket accept error");
+            }
+            else
+                break;
+        }
+    }
+    else
+    {
+        clnt_fd = ::accept(fd, (sockaddr *)&addr, &addr_len);
+        errif(clnt_fd == -1, "socket accept error");
+    }
+
     _addr->setAddr(addr, addr_len);
     return clnt_fd;
 }
