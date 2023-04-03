@@ -1,17 +1,46 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(cppserver)
+project(cppserver
+        VERSION 0.1
+        DESCRIPTION "simple cpp webserver"
+        LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 11) 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(BUILD_SHARED_LIBS ON)
+set(CMAKE_CXX_STANDARD 14) 
 set(CMAKE_CXX_STANDARD_REQUIRED True) 
-set(CMAKE_CXX_FLAGS "-g")
+
 set(CMAKE_CXX_FLAGS "-pthread")
 
-include_directories(./include)
+# do not run cmake in project root directory, run in ./build/ instead
+file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" PATH_TO_CMAKELISTS_TXT)
+if (EXISTS "${PATH_TO_CMAKELISTS_TXT}")
+    message(FATAL_ERROR "Run CMake from a build subdirectory! \"mkdir build ; cd build ; cmake .. \" \
+    Some junk files were created in this folder (CMakeCache.txt, CMakeFiles); you should delete those.")
+endif ()
 
-aux_source_directory(./src DIR_SRC)
+set(CPPSERVER_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/scripts)
 
-add_executable(server server.cpp ${DIR_SRC})
-add_executable(client client.cpp ./src/utilfunc.cpp)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wextra -std=c++14 -pthread")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fPIC")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fPIC")
+set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fPIC")
 
-add_executable(threadpool_test ./test/threadpool_test.cpp ${DIR_SRC})
+message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+message(STATUS "CMAKE_CXX_FLAGS_DEBUG: " ${CMAKE_CXX_FLAGS_DEBUG})
+message(STATUS "CMAKE_EXE_LINKER_FLAGS: " ${CMAKE_EXE_LINKER_FLAGS})
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS: " ${CMAKE_SHARED_LINKER_FLAGS})
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+include_directories(./src/include)
+
+aux_source_directory(./src LIB_SOURCES)
+
+add_library(server_shared ${LIB_SOURCES})
+
+# add_subdirectory(./src)
+add_subdirectory(./test)
