@@ -13,9 +13,13 @@ private:
     EventLoop *el;
     int fd;
     uint32_t events;
-    uint32_t revents;
+    uint32_t ready;
+
     bool in_epoll;
-    std::function<void()> callback_func;
+    bool use_threadpool;
+
+    std::function<void()> read_callback;
+    std::function<void()> write_callback;
 
 public:
     Channel(EventLoop *_el, int _fd);
@@ -25,14 +29,18 @@ public:
 
     int getFd();
     uint32_t getEvents();
-    uint32_t getRevents();
+    uint32_t getReady();
     bool inEpoll();
     void setInEpoll();
 
-    void setRevents(uint32_t);
+    void useET();
 
-    void setCallBack(std::function<void()>);
+    void setReady(uint32_t);
+
+    void setReadCallBack(std::function<void()>);
     void handleEvent();
+
+    void setUseThreadPool(bool use = true);
 };
 
 #endif

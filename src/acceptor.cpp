@@ -11,11 +11,11 @@ Acceptor::Acceptor(EventLoop *_loop) : loop(_loop)
     sock = new Socket();
     auto *addr = new InetAddress("127.0.0.1", 8888);
     sock->bind(addr);
-    sock->setnonblocking();
+    // sock->setnonblocking();
     sock->listen();
 
     channel = new Channel(loop, sock->getFd());
-    channel->setCallBack(std::bind(&Acceptor::acceptConnection, this));
+    channel->setReadCallBack(std::bind(&Acceptor::acceptConnection, this));
     channel->enableReading();
     delete addr;
 }

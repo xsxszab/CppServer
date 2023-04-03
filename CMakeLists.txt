@@ -12,4 +12,6 @@ include_directories(./include)
 aux_source_directory(./src DIR_SRC)
 
 add_executable(server server.cpp ${DIR_SRC})
-add_executable(client client.cpp ${DIR_SRC})
+add_executable(client client.cpp ./src/utilfunc.cpp)
+
+add_executable(threadpool_test ./test/threadpool_test.cpp ${DIR_SRC})

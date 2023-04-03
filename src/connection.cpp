@@ -13,7 +13,7 @@
 Connection::Connection(EventLoop *_loop, Socket *_sock) : loop(_loop), sock(_sock), channel(nullptr), buffer(nullptr)
 {
     channel = new Channel(loop, sock->getFd());
-    channel->setCallBack(std::bind(&Connection::echo, this, sock->getFd()));
+    channel->setReadCallBack(std::bind(&Connection::echo, this, sock->getFd()));
     channel->enableReading();
 
     buffer = new Buffer();
