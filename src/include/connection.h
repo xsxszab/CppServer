@@ -8,22 +8,21 @@ class Socket;
 class Channel;
 class Buffer;
 
-class Connection
-{
-private:
-    EventLoop *loop;
-    Buffer *buffer;
-    Socket *sock;
-    Channel *channel;
-    std::function<void(Socket *)> deleteConnectionCallBack;
+class Connection {
+ private:
+  EventLoop* loop;
+  Buffer* buffer;
+  Socket* sock;
+  Channel* channel;
+  std::function<void(Socket*)> deleteConnectionCallBack;
 
-public:
-    Connection(EventLoop *_loop, Socket *_sock);
-    ~Connection();
+ public:
+  Connection(EventLoop* _loop, Socket* _sock);
+  ~Connection();
 
-    void setDeleteConnectionCallBack(std::function<void(Socket *)>);
+  void setDeleteConnectionCallBack(std::function<void(Socket*)>);
 
-    void echo(int sockfd);
+  void echo(int sockfd);
 };
 
 #endif

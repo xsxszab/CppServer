@@ -3,21 +3,23 @@
 
 #include <string>
 
-class Buffer
-{
-private:
-    std::string buf;
+class Buffer {
+ private:
+  std::string buf;
 
-public:
-    Buffer();
-    ~Buffer();
+ public:
+  Buffer();
+  ~Buffer();
 
-    ssize_t size();
-    void append(const char *_str, int _size);
-    const char *c_str();
+  ssize_t size();
+  void append(const char* _str);
+  void append(const char* _str, int _size);
 
-    void clearBuffer();
-    void getLine();
+  void setBuf(const char* _str);
+  const char* c_str();
+
+  void clearBuffer();
+  void getLine();
 };
 
 #endif

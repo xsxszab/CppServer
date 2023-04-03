@@ -1,9 +1,10 @@
 #include <arpa/inet.h>
 #include <errno.h>
-#include <iostream>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <iostream>
 
 #include "utilfunc.h"
 
@@ -19,7 +20,7 @@ int main() {
   serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
   serv_addr.sin_port = htons(8888);
 
-  errif(connect(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)) == -1,
+  errif(connect(sockfd, (sockaddr*)&serv_addr, sizeof(serv_addr)) == -1,
         "socket connect error");
   while (true) {
     char buf[BUFFER_SIZE];

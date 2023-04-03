@@ -8,8 +8,7 @@ ThreadPool::ThreadPool(int num_thread) : stop(false) {
         {
           std::unique_lock<std::mutex> lock(tasks_mtx);
           cv.wait(lock, [this]() { return stop || !task_queue.empty(); });
-          if (stop && task_queue.empty())
-            return;
+          if (stop && task_queue.empty()) return;
           task = task_queue.front();
           task_queue.pop();
         }
@@ -25,8 +24,7 @@ ThreadPool::~ThreadPool() {
     stop = true;
   }
   cv.notify_all();
-  for (auto &thread : threads) {
-    if (thread.joinable())
-      thread.join();
+  for (auto& thread : threads) {
+    if (thread.joinable()) thread.join();
   }
 }

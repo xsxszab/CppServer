@@ -14,13 +14,13 @@ EventLoop::~EventLoop() { delete ep; }
 
 void EventLoop::loop() {
   while (!quit) {
-    std::vector<Channel *> channels = ep->poll();
+    std::vector<Channel*> channels = ep->poll();
     for (auto it = channels.begin(); it != channels.end(); it++) {
       (*it)->handleEvent();
     }
   }
 }
 
-void EventLoop::updateChannel(Channel *channel) { ep->updateChannel(channel); }
+void EventLoop::updateChannel(Channel* channel) { ep->updateChannel(channel); }
 
 void EventLoop::addThread(std::function<void()> func) { threadpool->add(func); }

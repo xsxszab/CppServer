@@ -7,20 +7,19 @@ class Epoll;
 class Channel;
 class ThreadPool;
 
-class EventLoop
-{
-private:
-    Epoll *ep;
-    ThreadPool *threadpool;
-    bool quit;
+class EventLoop {
+ private:
+  Epoll* ep;
+  ThreadPool* threadpool;
+  bool quit;
 
-public:
-    EventLoop();
-    ~EventLoop();
+ public:
+  EventLoop();
+  ~EventLoop();
 
-    void loop();
-    void updateChannel(Channel *);
-    void addThread(std::function<void()>);
+  void loop();
+  void updateChannel(Channel*);
+  void addThread(std::function<void()>);
 };
 
 #endif

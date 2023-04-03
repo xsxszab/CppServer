@@ -8,22 +8,21 @@ class Socket;
 class InetAddress;
 class Channel;
 
-class Acceptor
-{
-private:
-    EventLoop *loop;
-    Socket *sock;
-    Channel *channel;
+class Acceptor {
+ private:
+  EventLoop* loop;
+  Socket* sock;
+  Channel* channel;
 
-    std::function<void(Socket *)> newConnectionCallBack;
+  std::function<void(Socket*)> newConnectionCallBack;
 
-public:
-    Acceptor(EventLoop *_loop);
-    ~Acceptor();
+ public:
+  Acceptor(EventLoop* _loop);
+  ~Acceptor();
 
-    void acceptConnection();
+  void acceptConnection();
 
-    void setNewConnectionCallBack(std::function<void(Socket *)>);
+  void setNewConnectionCallBack(std::function<void(Socket*)>);
 };
 
 #endif

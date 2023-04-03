@@ -1,9 +1,11 @@
-#include <cstring>
-#include <iostream>
+#include "epoll_class.h"
+
 #include <unistd.h>
 
+#include <cstring>
+#include <iostream>
+
 #include "channel.h"
-#include "epoll_class.h"
 #include "utilfunc.h"
 
 #define MAX_EVENTS 1000
@@ -35,19 +37,19 @@ Epoll::~Epoll() {
 //     error");
 // }
 
-std::vector<Channel *> Epoll::poll(int timeout) {
-  std::vector<Channel *> active_channels;
+std::vector<Channel*> Epoll::poll(int timeout) {
+  std::vector<Channel*> active_channels;
   int nfds = epoll_wait(epfd, events, MAX_EVENTS, timeout);
   errif(nfds == -1, "epoll wait error");
   for (int i = 0; i < nfds; i++) {
-    Channel *ch = (Channel *)events[i].data.ptr;
+    Channel* ch = (Channel*)events[i].data.ptr;
     ch->setReady(events[i].events);
     active_channels.emplace_back(ch);
   }
   return active_channels;
 }
 
-void Epoll::updateChannel(Channel *channel) {
+void Epoll::updateChannel(Channel* channel) {
   int fd = channel->getFd();
   struct epoll_event ev;
   memset(&ev, '\0', sizeof(ev));

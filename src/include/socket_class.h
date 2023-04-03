@@ -3,23 +3,23 @@
 
 class InetAddress;
 
-class Socket
-{
-private:
-    int fd;
+class Socket {
+ private:
+  int fd;
 
-public:
-    Socket();
-    Socket(int _fd);
-    ~Socket();
+ public:
+  Socket();
+  Socket(int _fd);
+  ~Socket();
 
-    void bind(InetAddress *);
-    void listen();
-    void setnonblocking();
+  void bind(InetAddress*);
+  void listen();
+  void setnonblocking();
 
-    int accept(InetAddress *);
+  void connect(InetAddress* addr);
+  int accept(InetAddress*);
 
-    int getFd();
+  int getFd();
 };
 
 #endif

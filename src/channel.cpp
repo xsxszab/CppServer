@@ -1,11 +1,16 @@
 #include "channel.h"
-#include "epoll_class.h"
-#include "event_loop.h"
 
 #include <unistd.h>
 
-Channel::Channel(EventLoop *_el, int _fd)
-    : loop(_el), fd(_fd), events(0), ready(0), in_epoll(false),
+#include "epoll_class.h"
+#include "event_loop.h"
+
+Channel::Channel(EventLoop* _el, int _fd)
+    : loop(_el),
+      fd(_fd),
+      events(0),
+      ready(0),
+      in_epoll(false),
       use_threadpool(true) {}
 
 Channel::~Channel() {
