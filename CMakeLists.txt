@@ -5,6 +5,7 @@ project(cppserver)
 set(CMAKE_CXX_STANDARD 11) 
 set(CMAKE_CXX_STANDARD_REQUIRED True) 
 set(CMAKE_CXX_FLAGS "-g")
+set(CMAKE_CXX_FLAGS "-pthread")
 
 include_directories(./include)
 

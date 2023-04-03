@@ -15,7 +15,7 @@ int main()
     errif(sockfd == -1, "socket create error");
 
     struct sockaddr_in serv_addr;
-    bzero(&serv_addr, sizeof(serv_addr));
+    memset(&serv_addr, '\0', sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     serv_addr.sin_port = htons(8888);
@@ -24,7 +24,7 @@ int main()
     while (true)
     {
         char buf[BUFFER_SIZE];
-        bzero(&buf, sizeof(buf));
+        memset(&buf, '\0', sizeof(buf));
         std::cin >> buf;
         ssize_t bytes_write = write(sockfd, buf, sizeof(buf));
         if (bytes_write == -1)
@@ -32,7 +32,7 @@ int main()
             std::cout << "socket closed, cannot write bytes" << std::endl;
             break;
         }
-        bzero(&buf, sizeof(buf));
+        memset(&buf, '\0', sizeof(buf));
         ssize_t bytes_read = read(sockfd, buf, sizeof(buf));
         if (bytes_read > 0)
         {

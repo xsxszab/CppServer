@@ -50,7 +50,7 @@ int Socket::accept(InetAddress *_addr)
 {
     struct sockaddr_in addr;
     socklen_t addr_len = sizeof(addr);
-    bzero(&addr, sizeof(addr));
+    memset(&addr, '\0', sizeof(addr));
     int clnt_fd = ::accept(fd, (sockaddr *)&addr, &addr_len);
     errif(clnt_fd == -1, "socket accept error");
     _addr->setAddr(addr, addr_len);

@@ -36,7 +36,7 @@ void Connection::echo(int sockfd)
     char buf[BUFFER_SIZE];
     while (true)
     {
-        bzero(&buf, sizeof(buf));
+        memset(&buf, '\0', sizeof(buf));
         ssize_t bytes_read = read(sockfd, buf, sizeof(buf));
         if (bytes_read > 0)
         {

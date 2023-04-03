@@ -3,10 +3,12 @@
 #include "event_loop.h"
 #include "channel.h"
 #include "epoll_class.h"
+#include "thread_pool.h"
 
-EventLoop::EventLoop() : ep(nullptr), quit(false)
+EventLoop::EventLoop() : ep(nullptr), threadpool(nullptr), quit(false)
 {
     ep = new Epoll();
+    threadpool = new ThreadPool();
 }
 
 EventLoop::~EventLoop()
@@ -29,4 +31,9 @@ void EventLoop::loop()
 void EventLoop::updateChannel(Channel *channel)
 {
     ep->updateChannel(channel);
+}
+
+void EventLoop::addThread(std::function<void()> func)
+{
+    threadpool->add(func);
 }

@@ -14,7 +14,7 @@ Epoll::Epoll() : events(nullptr), epfd(-1)
     errif(epfd == -1, "epoll create error");
 
     events = new epoll_event[MAX_EVENTS];
-    bzero(events, sizeof(*events) * MAX_EVENTS);
+    memset(events, '\0', sizeof(*events) * MAX_EVENTS);
 }
 
 Epoll::~Epoll()
@@ -30,7 +30,7 @@ Epoll::~Epoll()
 // void Epoll::add_fd(int fd, uint32_t op)
 // {
 //     struct epoll_event ev;
-//     bzero(&ev, sizeof(ev));
+//     memset(&ev, '\0', sizeof(ev));
 
 //     ev.data.fd = fd;
 //     ev.events = op;
@@ -55,7 +55,7 @@ void Epoll::updateChannel(Channel *channel)
 {
     int fd = channel->getFd();
     struct epoll_event ev;
-    bzero(&ev, sizeof(ev));
+    memset(&ev, '\0', sizeof(ev));
     ev.data.ptr = channel;
     ev.events = channel->getEvents();
     if (!channel->inEpoll())

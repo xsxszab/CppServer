@@ -47,11 +47,11 @@ void Channel::setCallBack(std::function<void()> func)
 
 void Channel::handleEvent()
 {
-    callback_func();
+    el->addThread(callback_func);
 }
 
 void Channel::enableReading()
 {
-    events = EPOLLIN | EPOLLET;
+    events |= EPOLLIN | EPOLLET;
     el->updateChannel(this);
 }
