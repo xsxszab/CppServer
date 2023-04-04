@@ -4,11 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "buffer.h"
-#include "connection.h"
-#include "inet_address.h"
-#include "socket_class.h"
-#include "thread_pool.h"
+#include "cppserver.h"
 
 // void client_func(int num_msgs, int sleep_seconds, int thread_id) {
 // std::cout << "thread " << thread_id << ": start thread" << std::endl;
@@ -67,8 +63,10 @@ void client_func(int num_msgs, int sleep_seconds, int thread_id) {
   Connection* conn = new Connection(nullptr, sock);
 
   for (int i = 0; i < num_msgs; i++) {
-    std::string msg = "message from client fd ";
+    std::string msg = "echo from client fd ";
     msg += std::to_string(thread_id);
+    msg += ", count ";
+    msg += std::to_string(i + 1);
     conn->setWriteBuffer(msg.c_str());
     conn->write();
     if (conn->getState() == Connection::State::Closed) {
@@ -79,7 +77,7 @@ void client_func(int num_msgs, int sleep_seconds, int thread_id) {
     std::cout << conn->readBuffer() << std::endl;
   }
 
-  delete sock;
+  // delete sock;
   delete conn;
 }
 

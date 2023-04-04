@@ -1,10 +1,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "connection.h"
-#include "event_loop.h"
-#include "server_class.h"
-#include "socket_class.h"
+#include "cppserver.h"
 
 int main() {
   EventLoop* main_loop = new EventLoop();

@@ -107,10 +107,10 @@ void Connection::readNonBlocking() {
       std::cout << "continue reading" << std::endl;
       continue;
     } else if (bytes_read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-      std::cout << "finish reading" << std::endl;
+      // std::cout << "finish reading" << std::endl;
       break;
     } else if (bytes_read == 0) {
-      std::cout << "EOF, socket " << sockfd << " disconnected" << std::endl;
+      // std::cout << "EOF, socket " << sockfd << " disconnected" << std::endl;
       state = State::Closed;
       break;
     } else {
@@ -163,7 +163,7 @@ void Connection::readBlocking() {
   if (bytes_read > 0) {
     read_buffer->append(buf, bytes_read);
   } else if (bytes_read == 0) {
-    std::cout << "read EOF, fd " << sockfd << " disconnected" << std::endl;
+    // std::cout << "read EOF, fd " << sockfd << " disconnected" << std::endl;
   } else if (bytes_read == -1) {
     std::cout << "error during reading socket " << sockfd << std::endl;
     state = State::Closed;

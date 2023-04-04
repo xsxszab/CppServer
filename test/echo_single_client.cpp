@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include "connection.h"
-#include "socket_class.h"
+#include "cppserver.h"
 
 int main() {
   Socket* sock = new Socket();
