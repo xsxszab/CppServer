@@ -59,6 +59,12 @@ void Socket::connect(InetAddress* addr) {
   }
 }
 
+void Socket::connect(const char* ip, uint16_t port) {
+  InetAddress* addr = new InetAddress(ip, port);
+  connect(addr);
+  delete addr;
+}
+
 int Socket::accept(InetAddress* _addr) {
   struct sockaddr_in addr;
   socklen_t addr_len = sizeof(addr);
@@ -82,5 +88,7 @@ int Socket::accept(InetAddress* _addr) {
   _addr->setAddr(addr, addr_len);
   return clnt_fd;
 }
+
+bool Socket::isNonBlocking() { return (fcntl(fd, F_GETFL) & O_NONBLOCK) != 0; }
 
 int Socket::getFd() { return fd; }

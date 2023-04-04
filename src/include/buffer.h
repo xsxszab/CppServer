@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "marcos.h"
+
 class Buffer {
  private:
   std::string buf;
@@ -10,6 +12,8 @@ class Buffer {
  public:
   Buffer();
   ~Buffer();
+
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(Buffer)
 
   ssize_t size();
   void append(const char* _str);

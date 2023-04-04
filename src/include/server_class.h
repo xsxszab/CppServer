@@ -1,8 +1,11 @@
 #ifndef SERVER_CLASS_H
 #define SERVER_CLASS_H
 
+#include <functional>
 #include <unordered_map>
 #include <vector>
+
+#include "marcos.h"
 
 class EventLoop;
 class Socket;
@@ -19,12 +22,17 @@ class Server {
   std::vector<EventLoop*> sub_reactor;
   std::unordered_map<int, Connection*> connections;
 
+  std::function<void(Connection*)> on_connection_callback;
+
  public:
-  Server(EventLoop*);
+  explicit Server(EventLoop*);
   ~Server();
+
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(Server)
 
   void newConnection(Socket*);
   void deleteConnection(Socket*);
+  void onConnect(std::function<void(Connection*)>);
 };
 
 #endif

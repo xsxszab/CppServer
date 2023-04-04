@@ -3,23 +3,24 @@
 
 #include <functional>
 
+#include "marcos.h"
+
 class Epoll;
 class Channel;
-class ThreadPool;
 
 class EventLoop {
  private:
   Epoll* ep;
-  ThreadPool* threadpool;
   bool quit;
 
  public:
   EventLoop();
   ~EventLoop();
 
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(EventLoop)
+
   void loop();
   void updateChannel(Channel*);
-  void addThread(std::function<void()>);
 };
 
 #endif

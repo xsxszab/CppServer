@@ -10,6 +10,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "marcos.h"
+
 class ThreadPool {
  private:
   std::vector<std::thread> threads;
@@ -22,6 +24,8 @@ class ThreadPool {
  public:
   ThreadPool(int num_thread = 8);
   ~ThreadPool();
+
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(ThreadPool)
 
   template <class F, class... Args>
   auto add(F&& f, Args&&... args)

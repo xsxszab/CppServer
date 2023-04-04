@@ -3,6 +3,8 @@
 
 #include <functional>
 
+#include "marcos.h"
+
 class EventLoop;
 class Socket;
 class InetAddress;
@@ -17,8 +19,10 @@ class Acceptor {
   std::function<void(Socket*)> newConnectionCallBack;
 
  public:
-  Acceptor(EventLoop* _loop);
+  explicit Acceptor(EventLoop* _loop);
   ~Acceptor();
+
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(Acceptor)
 
   void acceptConnection();
 

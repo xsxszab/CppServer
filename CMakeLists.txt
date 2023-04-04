@@ -112,9 +112,6 @@ add_custom_target(clang-tidy ${CMAKE_SOURCE_DIR}/scripts/run_clang_tidy.py
 
 include_directories(${CMAKE_SOURCE_DIR}/src/include)
 
-aux_source_directory(${CMAKE_SOURCE_DIR}/src LIB_SOURCES)
 
-add_library(server_shared ${LIB_SOURCES})
-
-# add_subdirectory(./src)
+add_subdirectory(./src)
 add_subdirectory(./test)
