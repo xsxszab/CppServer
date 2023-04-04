@@ -89,12 +89,13 @@ void Connection::business() {
 Connection::State Connection::getState() { return state; }
 
 void Connection::close() {
-  std::cout << "close connection, call delete callback function" << std::endl;
+  // std::cout << "close connection, call delete callback function" <<
+  // std::endl;
   delete_connection_callback(sock);
 }
 
 void Connection::readNonBlocking() {
-  std::cout << "read nonblocking" << std::endl;
+  // std::cout << "read nonblocking" << std::endl;
   int sockfd = sock->getFd();
   char buf[BUFFER_SIZE];
   while (true) {
@@ -121,19 +122,19 @@ void Connection::readNonBlocking() {
 }
 
 void Connection::writeNonBlocking() {
-  std::cout << "write nonblocking" << std::endl;
+  // std::cout << "write nonblocking" << std::endl;
   int sockfd = sock->getFd();
   int bytes_to_write = write_buffer->size();
-  std::cout << "write buffer size:" << bytes_to_write << std::endl;
+  // std::cout << "write buffer size:" << bytes_to_write << std::endl;
 
   char buf[bytes_to_write];
   memcpy(buf, write_buffer->c_str(), bytes_to_write);
   int bytes_left = bytes_to_write;
   while (bytes_left > 0) {
-    std::cout << "bytes left to be sent: " << bytes_left << std::endl;
+    // std::cout << "bytes left to be sent: " << bytes_left << std::endl;
     ssize_t bytes_write =
         ::write(sockfd, buf + bytes_to_write - bytes_left, bytes_left);
-    std::cout << "bytes wrote: " << bytes_write << std::endl;
+    // std::cout << "bytes wrote: " << bytes_write << std::endl;
     if (bytes_write > 0) {
       bytes_left -= bytes_write;
       continue;
@@ -152,7 +153,7 @@ void Connection::writeNonBlocking() {
 }
 
 void Connection::readBlocking() {
-  std::cout << "read blocking" << std::endl;
+  // std::cout << "read blocking" << std::endl;
   int sockfd = sock->getFd();
   unsigned int read_size = 0;
   socklen_t len = sizeof(read_size);
@@ -170,7 +171,7 @@ void Connection::readBlocking() {
 }
 
 void Connection::writeBlocking() {
-  std::cout << "write blocking" << std::endl;
+  // std::cout << "write blocking" << std::endl;
   int sockfd = sock->getFd();
   ssize_t bytes_write =
       ::write(sockfd, write_buffer->c_str(), write_buffer->size());

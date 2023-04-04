@@ -6,18 +6,6 @@
 #include "server_class.h"
 #include "socket_class.h"
 
-// void connectCallback(Connection* conn) {
-//   conn->read();
-//   if (conn->getState() == Connection::State::Closed) {
-//     std::cout << "connection closed" << std::endl;
-//     conn->close();
-//     return;
-//   }
-//   std::cout << "message from client: " << conn->readBuffer() << std::endl;
-//   conn->setWriteBuffer(conn->readBuffer());
-//   conn->write();
-// }
-
 int main() {
   EventLoop* main_loop = new EventLoop();
   Server* server = new Server(main_loop);
