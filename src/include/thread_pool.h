@@ -12,6 +12,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class ThreadPool {
  private:
   std::vector<std::thread> threads;
@@ -51,5 +53,7 @@ inline auto ThreadPool::add(F&& f, Args&&... args)
   cv.notify_one();
   return res;
 }
+
+}  // namespace cppserver_core
 
 #endif

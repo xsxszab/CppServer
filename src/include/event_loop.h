@@ -5,6 +5,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class Epoll;
 class Channel;
 
@@ -22,5 +24,7 @@ class EventLoop {
   void loop();
   void updateChannel(Channel*);
 };
+
+}  // namespace cppserver_core
 
 #endif

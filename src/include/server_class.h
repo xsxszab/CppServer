@@ -7,6 +7,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class EventLoop;
 class Socket;
 class Acceptor;
@@ -38,5 +40,7 @@ class Server {
   void onMessage(std::function<void(Connection*)>);
   void newConnect(std::function<void(Connection*)>);
 };
+
+}  // namespace cppserver_core
 
 #endif

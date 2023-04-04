@@ -3,6 +3,8 @@
 
 #include <arpa/inet.h>
 
+namespace cppserver_core {
+
 class InetAddress {
  public:
   struct sockaddr_in addr;
@@ -17,5 +19,7 @@ class InetAddress {
   sockaddr_in getAddr();
   socklen_t getAddrLen();
 };
+
+}  // namespace cppserver_core
 
 #endif

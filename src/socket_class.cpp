@@ -12,6 +12,8 @@
 #include "inet_address.h"
 #include "utilfunc.h"
 
+namespace cppserver_core {
+
 Socket::Socket() : fd(-1) {
   fd = socket(AF_INET, SOCK_STREAM, 0);
   errif(fd == -1, "socket create error");
@@ -92,3 +94,5 @@ int Socket::accept(InetAddress* _addr) {
 bool Socket::isNonBlocking() { return (fcntl(fd, F_GETFL) & O_NONBLOCK) != 0; }
 
 int Socket::getFd() { return fd; }
+
+}  // namespace cppserver_core

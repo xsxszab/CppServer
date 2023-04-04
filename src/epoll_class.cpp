@@ -10,6 +10,8 @@
 
 #define MAX_EVENTS 1000
 
+namespace cppserver_core {
+
 Epoll::Epoll() : epfd(-1), events(nullptr) {
   epfd = epoll_create1(0);
   errif(epfd == -1, "epoll create error");
@@ -62,3 +64,5 @@ void Epoll::updateChannel(Channel* channel) {
     errif(epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev) == -1, "epoll modify error");
   }
 }
+
+}  // namespace cppserver_core

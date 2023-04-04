@@ -5,6 +5,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class EventLoop;
 class Socket;
 class InetAddress;
@@ -28,5 +30,7 @@ class Acceptor {
 
   void setNewConnectionCallBack(std::function<void(Socket*)>);
 };
+
+}  // namespace cppserver_core
 
 #endif

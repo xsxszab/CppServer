@@ -7,6 +7,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class Channel;
 
 class Epoll {
@@ -25,5 +27,7 @@ class Epoll {
 
   void updateChannel(Channel*);
 };
+
+}  // namespace cppserver_core
 
 #endif

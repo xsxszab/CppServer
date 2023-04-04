@@ -7,6 +7,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class Epoll;
 class EventLoop;
 
@@ -43,5 +45,7 @@ class Channel {
   void setReadCallBack(std::function<void()>);
   void handleEvent();
 };
+
+}  // namespace cppserver_core
 
 #endif

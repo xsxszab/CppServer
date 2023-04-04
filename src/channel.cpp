@@ -5,6 +5,8 @@
 #include "epoll_class.h"
 #include "event_loop.h"
 
+namespace cppserver_core {
+
 Channel::Channel(EventLoop* _el, int _fd)
     : loop(_el), fd(_fd), listen_events(0), ready_events(0), in_epoll(false) {}
 
@@ -50,3 +52,5 @@ void Channel::enableReading() {
   listen_events |= EPOLLIN | EPOLLPRI;
   loop->updateChannel(this);
 }
+
+}  // namespace cppserver_core

@@ -5,6 +5,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class EventLoop;
 class Socket;
 class Channel;
@@ -61,5 +63,7 @@ class Connection {
   void readBlocking();
   void writeBlocking();
 };
+
+}  // namespace cppserver_core
 
 #endif

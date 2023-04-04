@@ -5,6 +5,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class InetAddress;
 
 class Socket {
@@ -30,5 +32,7 @@ class Socket {
 
   int getFd();
 };
+
+}
 
 #endif

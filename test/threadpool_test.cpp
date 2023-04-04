@@ -2,6 +2,8 @@
 
 #include "cppserver.h"
 
+using namespace cppserver_core;
+
 void print_variable(int a, float b, const char* c) {
   std::cout << a << " " << b << " " << c << std::endl;
 }

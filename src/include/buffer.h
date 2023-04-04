@@ -5,6 +5,8 @@
 
 #include "marcos.h"
 
+namespace cppserver_core {
+
 class Buffer {
  private:
   std::string buf;
@@ -25,5 +27,7 @@ class Buffer {
   void clearBuffer();
   void getLine();
 };
+
+}  // namespace cppserver_core
 
 #endif

@@ -20,6 +20,8 @@
 #define MAX_EVENTS 1024
 #define BUFFER_SIZE 1024
 
+namespace cppserver_core {
+
 Server::Server(EventLoop* _loop) : main_reactor(_loop), acceptor(nullptr) {
   acceptor = new Acceptor(main_reactor);
   acceptor->setNewConnectionCallBack(
@@ -82,3 +84,5 @@ void Server::onMessage(std::function<void(Connection*)> func) {
 void Server::newConnect(std::function<void(Connection*)> func) {
   on_message_callback = std::move(func);
 }
+
+}  // namespace cppserver_core

@@ -1,5 +1,7 @@
 #include "thread_pool.h"
 
+namespace cppserver_core {
+
 ThreadPool::ThreadPool(int num_thread) : stop(false) {
   for (int i = 0; i < num_thread; i++) {
     threads.emplace_back(std::thread([this]() {
@@ -28,3 +30,5 @@ ThreadPool::~ThreadPool() {
     if (thread.joinable()) thread.join();
   }
 }
+
+}  // namespace cppserver_core

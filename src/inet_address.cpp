@@ -1,6 +1,8 @@
+#include "inet_address.h"
+
 #include <cstring>
 
-#include "inet_address.h"
+namespace cppserver_core {
 
 InetAddress::InetAddress() : addr_len(sizeof(addr)) {
   memset(&addr, '\0', sizeof(addr));
@@ -24,3 +26,5 @@ void InetAddress::setAddr(sockaddr_in _addr, socklen_t _addr_len) {
 sockaddr_in InetAddress::getAddr() { return addr; }
 
 socklen_t InetAddress::getAddrLen() { return addr_len; }
+
+}  // namespace cppserver_core

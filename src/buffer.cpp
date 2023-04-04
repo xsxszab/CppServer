@@ -3,6 +3,8 @@
 #include <cstring>
 #include <iostream>
 
+namespace cppserver_core {
+
 Buffer::Buffer() {}
 
 Buffer::~Buffer() {}
@@ -31,3 +33,5 @@ void Buffer::setBuf(const char* _str) {
 }
 
 void Buffer::clearBuffer() { buf.clear(); }
+
+}

@@ -2,6 +2,8 @@
 
 #include "cppserver.h"
 
+using namespace cppserver_core;
+
 int main() {
   Socket* sock = new Socket();
   sock->connect("127.0.0.1", 8888);

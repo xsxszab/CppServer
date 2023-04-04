@@ -7,6 +7,8 @@
 #include "inet_address.h"
 #include "socket_class.h"
 
+namespace cppserver_core {
+
 Acceptor::Acceptor(EventLoop* _loop) : loop(_loop) {
   sock = new Socket();
   auto* addr = new InetAddress("127.0.0.1", 8888);
@@ -38,4 +40,6 @@ void Acceptor::acceptConnection() {
 
 void Acceptor::setNewConnectionCallBack(std::function<void(Socket*)> func) {
   newConnectionCallBack = func;
+}
+
 }

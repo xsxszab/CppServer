@@ -3,6 +3,8 @@
 
 #include "cppserver.h"
 
+using namespace cppserver_core;
+
 int main() {
   EventLoop* main_loop = new EventLoop();
   Server* server = new Server(main_loop);

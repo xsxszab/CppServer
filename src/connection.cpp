@@ -13,6 +13,8 @@
 
 #define BUFFER_SIZE 1024
 
+namespace cppserver_core {
+
 Connection::Connection(EventLoop* _loop, Socket* _sock)
     : loop(_loop),
       read_buffer(nullptr),
@@ -194,3 +196,5 @@ void Connection::setWriteBuffer(const char* str) { write_buffer->setBuf(str); }
 void Connection::getLineWriteBuffer() { write_buffer->getLine(); }
 
 Socket* Connection::getSocket() { return sock; }
+
+}
