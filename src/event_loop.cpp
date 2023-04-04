@@ -8,19 +8,19 @@
 
 namespace cppserver_core {
 
-EventLoop::EventLoop() : ep(nullptr), quit(false) { ep = new Epoll(); }
+EventLoop::EventLoop() : ep_(nullptr) { ep_ = new Epoll(); }
 
-EventLoop::~EventLoop() { delete ep; }
+EventLoop::~EventLoop() { delete ep_; }
 
-void EventLoop::loop() {
-  while (!quit) {
-    std::vector<Channel*> channels = ep->poll();
+void EventLoop::Loop() {
+  while (!quit_) {
+    std::vector<Channel*> channels = ep_->Poll();
     for (auto& channel : channels) {
-      channel->handleEvent();
+      channel->HandleEvent();
     }
   }
 }
 
-void EventLoop::updateChannel(Channel* channel) { ep->updateChannel(channel); }
+void EventLoop::UpdateChannel(Channel* channel) { ep_->UpdateChannel(channel); }
 
 }  // namespace cppserver_core

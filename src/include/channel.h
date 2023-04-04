@@ -14,15 +14,15 @@ class EventLoop;
 
 class Channel {
  private:
-  EventLoop* loop;
-  int fd;
-  uint32_t listen_events;
-  uint32_t ready_events;
+  EventLoop* loop_;
+  int fd_;
+  uint32_t listen_events_;
+  uint32_t ready_events_;
 
-  bool in_epoll;
+  bool in_epoll_;
 
-  std::function<void()> read_callback;
-  std::function<void()> write_callback;
+  std::function<void()> read_callback_;
+  std::function<void()> write_callback_;
 
  public:
   Channel(EventLoop* _el, int _fd);
@@ -30,20 +30,20 @@ class Channel {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Channel)
 
-  void enableReading();
+  void EnableReading();
 
-  int getFd();
-  uint32_t getListenEvents();
-  uint32_t getReadyEvents();
-  bool inEpoll();
-  void setInEpoll(bool _in_epoll = true);
+  int GetFd();
+  uint32_t GetListenEvents();
+  uint32_t GetReadyEvents();
+  bool InEpoll();
+  void SetInEpoll(bool _in_epoll = true);
 
-  void useET();
+  void UseET();
 
-  void setReadyEvents(uint32_t);
+  void SetReadyEvents(uint32_t ev);
 
-  void setReadCallBack(std::function<void()>);
-  void handleEvent();
+  void SetReadCallBack(std::function<void()> func);
+  void HandleEvent();
 };
 
 }  // namespace cppserver_core

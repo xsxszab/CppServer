@@ -12,8 +12,8 @@ class Channel;
 
 class EventLoop {
  private:
-  Epoll* ep;
-  bool quit;
+  Epoll* ep_{nullptr};
+  bool quit_{false};
 
  public:
   EventLoop();
@@ -21,8 +21,8 @@ class EventLoop {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(EventLoop)
 
-  void loop();
-  void updateChannel(Channel*);
+  void Loop();
+  void UpdateChannel(Channel* channel);
 };
 
 }  // namespace cppserver_core

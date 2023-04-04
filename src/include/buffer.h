@@ -9,23 +9,23 @@ namespace cppserver_core {
 
 class Buffer {
  private:
-  std::string buf;
+  std::string buf_;
 
  public:
-  Buffer();
+  explicit Buffer();
   ~Buffer();
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Buffer)
 
-  ssize_t size();
-  void append(const char* _str);
-  void append(const char* _str, int _size);
+  ssize_t Size();
+  void Append(const char* _str);
+  void Append(const char* _str, int _size);
 
-  void setBuf(const char* _str);
-  const char* c_str();
+  void SetBuf(const char* _str);
+  const char* Cstr();
 
-  void clearBuffer();
-  void getLine();
+  void ClearBuffer();
+  void GetLine();
 };
 
 }  // namespace cppserver_core

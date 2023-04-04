@@ -27,41 +27,41 @@ class Connection {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Connection)
 
-  void read();
-  void write();
+  void Read();
+  void Write();
 
-  void setDeleteConnectionCallBack(std::function<void(Socket*)> const&);
-  void setOnConnectCallBack(std::function<void(Connection*)> const&);
-  void setOnMessageCallBack(std::function<void(Connection*)> const&);
-  void business();
+  void SetDeleteConnectionCallBack(std::function<void(Socket*)> const& func);
+  void SetOnConnectCallBack(std::function<void(Connection*)> const& func);
+  void SetOnMessageCallBack(std::function<void(Connection*)> const& func);
+  void Business();
 
-  State getState();
-  void close();
+  State GetState();
+  void Close();
 
-  Buffer* getReadBuffer();
-  const char* readBuffer();
-  Buffer* getWriteBuffer();
-  const char* writeBuffer();
-  void setWriteBuffer(const char* str);
-  void getLineWriteBuffer();
+  Buffer* GetReadBuffer();
+  const char* ReadBuffer();
+  Buffer* GetWriteBuffer();
+  const char* WriteBuffer();
+  void SetWriteBuffer(const char* str);
+  void GetLineWriteBuffer();
 
-  Socket* getSocket();
+  Socket* GetSocket();
 
  private:
-  EventLoop* loop;
-  Buffer* read_buffer;
-  Buffer* write_buffer;
-  Socket* sock;
-  Channel* channel;
-  std::function<void(Socket*)> delete_connection_callback;
-  std::function<void(Connection*)> on_connect_callback;
-  std::function<void(Connection*)> on_message_callback;
-  State state{State::Invalid};
+  EventLoop* loop_;
+  Buffer* read_buffer_;
+  Buffer* write_buffer_;
+  Socket* sock_;
+  Channel* channel_;
+  std::function<void(Socket*)> delete_connection_callback_;
+  std::function<void(Connection*)> on_connect_callback_;
+  std::function<void(Connection*)> on_message_callback_;
+  State state_{State::Invalid};
 
-  void readNonBlocking();
-  void writeNonBlocking();
-  void readBlocking();
-  void writeBlocking();
+  void ReadNonBlocking();
+  void WriteNonBlocking();
+  void ReadBlocking();
+  void WriteBlocking();
 };
 
 }  // namespace cppserver_core

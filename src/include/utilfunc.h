@@ -3,7 +3,7 @@
 
 namespace cppserver_core {
 
-void errif(bool condition, const char* errmsg);
+void Errif(bool condition, const char* errmsg);
 
 }
 #endif

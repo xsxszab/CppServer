@@ -9,37 +9,37 @@
 
 namespace cppserver_core {
 
-Acceptor::Acceptor(EventLoop* _loop) : loop(_loop) {
-  sock = new Socket();
+Acceptor::Acceptor(EventLoop* loop) : loop_(loop) {
+  sock_ = new Socket();
   auto* addr = new InetAddress("127.0.0.1", 8888);
-  sock->bind(addr);
+  sock_->Bind(addr);
   // sock->setnonblocking();
-  sock->listen();
+  sock_->Listen();
 
-  channel = new Channel(loop, sock->getFd());
-  channel->setReadCallBack(std::bind(&Acceptor::acceptConnection, this));
-  channel->enableReading();
+  channel_ = new Channel(loop_, sock_->GetFd());
+  channel_->SetReadCallBack(std::bind(&Acceptor::AcceptConnection, this));
+  channel_->EnableReading();
   delete addr;
 }
 
 Acceptor::~Acceptor() {
-  delete sock;
-  delete channel;
+  delete sock_;
+  delete channel_;
 }
 
-void Acceptor::acceptConnection() {
+void Acceptor::AcceptConnection() {
   InetAddress* clnt_addr = new InetAddress();
-  Socket* clnt_sock = new Socket(sock->accept(clnt_addr));
-  std::cout << "new client fd: " << clnt_sock->getFd()
-            << " IP: " << inet_ntoa(clnt_addr->getAddr().sin_addr)
-            << " Port: " << ntohs(clnt_addr->getAddr().sin_port) << std::endl;
-  clnt_sock->setnonblocking();
-  newConnectionCallBack(clnt_sock);
+  Socket* clnt_sock = new Socket(sock_->Accept(clnt_addr));
+  std::cout << "new client fd: " << clnt_sock->GetFd()
+            << " IP: " << inet_ntoa(clnt_addr->GetAddr().sin_addr)
+            << " Port: " << ntohs(clnt_addr->GetAddr().sin_port) << std::endl;
+  clnt_sock->Setnonblocking();
+  new_connection_callback_(clnt_sock);
   delete clnt_addr;
 }
 
-void Acceptor::setNewConnectionCallBack(std::function<void(Socket*)> func) {
-  newConnectionCallBack = func;
+void Acceptor::SetNewConnectionCallBack(std::function<void(Socket*)> func) {
+  new_connection_callback_ = func;
 }
 
-}
+}  // namespace cppserver_core

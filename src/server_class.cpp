@@ -22,67 +22,71 @@
 
 namespace cppserver_core {
 
-Server::Server(EventLoop* _loop) : main_reactor(_loop), acceptor(nullptr) {
-  acceptor = new Acceptor(main_reactor);
-  acceptor->setNewConnectionCallBack(
-      std::bind(&Server::newConnection, this, std::placeholders::_1));
+Server::Server(EventLoop* _loop) : main_reactor_(_loop), acceptor_(nullptr) {
+  acceptor_ = new Acceptor(main_reactor_);
+  acceptor_->SetNewConnectionCallBack(
+      std::bind(&Server::NewConnection, this, std::placeholders::_1));
 
   int num_threads = std::thread::hardware_concurrency();
   std::cout << "thread pool size: " << num_threads << std::endl;
-  threadpool = new ThreadPool(num_threads);
+  threadpool_ = new ThreadPool(num_threads);
 
-  for (int i = 0; i < num_threads; i++) sub_reactors.push_back(new EventLoop());
+  for (int i = 0; i < num_threads; i++) {
+    sub_reactors_.push_back(new EventLoop());
+  }
 
   for (int i = 0; i < num_threads; i++) {
     std::function<void()> sub_loop =
-        std::bind(&EventLoop::loop, sub_reactors[i]);
-    threadpool->add(std::move(sub_loop));
+        std::bind(&EventLoop::Loop, sub_reactors_[i]);
+    threadpool_->Add(std::move(sub_loop));
   }
 }
 
 Server::~Server() {
-  for (auto* loop : sub_reactors) delete loop;
-  delete acceptor;
-  delete threadpool;
+  for (auto* loop : sub_reactors_) {
+    delete loop;
+  }
+  delete acceptor_;
+  delete threadpool_;
 }
 
-void Server::newConnection(Socket* sock) {
-  errif(sock->getFd() == -1, "invalid socket fd");
-  int rand_choice = sock->getFd() % sub_reactors.size();
-  Connection* conn = new Connection(sub_reactors[rand_choice], sock);
+void Server::NewConnection(Socket* sock) {
+  Errif(sock->GetFd() == -1, "invalid socket fd");
+  int rand_choice = sock->GetFd() % sub_reactors_.size();
+  Connection* conn = new Connection(sub_reactors_[rand_choice], sock);
   // std::cout << "init new connection, register callback functions" <<
   // std::endl;
-  conn->setDeleteConnectionCallBack(
-      std::bind(&Server::deleteConnection, this, std::placeholders::_1));
+  conn->SetDeleteConnectionCallBack(
+      std::bind(&Server::DeleteConnection, this, std::placeholders::_1));
   // conn->setOnConnectCallBack(on_connection_callback);
-  conn->setOnMessageCallBack(on_message_callback);
-  connections[sock->getFd()] = conn;
+  conn->SetOnMessageCallBack(on_message_callback_);
+  connections_[sock->GetFd()] = conn;
 }
 
-void Server::deleteConnection(Socket* sock) {
+void Server::DeleteConnection(Socket* sock) {
   std::cout << "delete registered connection instance" << std::endl;
-  int fd = sock->getFd();
+  int fd = sock->GetFd();
   if (fd != -1) {
-    auto it = connections.find(fd);
-    if (it != connections.end()) {
-      Connection* conn = connections[fd];
-      connections.erase(fd);
+    auto it = connections_.find(fd);
+    if (it != connections_.end()) {
+      Connection* conn = connections_[fd];
+      connections_.erase(fd);
       delete conn;
       conn = nullptr;
     }
   }
 }
 
-void Server::onConnect(std::function<void(Connection*)> func) {
-  on_connection_callback = std::move(func);
+void Server::OnConnect(std::function<void(Connection*)> func) {
+  on_connection_callback_ = std::move(func);
 }
 
-void Server::onMessage(std::function<void(Connection*)> func) {
-  on_message_callback = std::move(func);
+void Server::OnMessage(std::function<void(Connection*)> func) {
+  on_message_callback_ = std::move(func);
 }
 
-void Server::newConnect(std::function<void(Connection*)> func) {
-  on_message_callback = std::move(func);
+void Server::NewConnect(std::function<void(Connection*)> func) {
+  on_message_callback_ = std::move(func);
 }
 
 }  // namespace cppserver_core

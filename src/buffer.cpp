@@ -5,33 +5,35 @@
 
 namespace cppserver_core {
 
-Buffer::Buffer() {}
+Buffer::Buffer() = default;
 
-Buffer::~Buffer() {}
+Buffer::~Buffer() = default;
 
-void Buffer::getLine() {
-  clearBuffer();
-  std::getline(std::cin, buf);
+void Buffer::GetLine() {
+  ClearBuffer();
+  std::getline(std::cin, buf_);
 }
 
-ssize_t Buffer::size() { return buf.size(); }
+ssize_t Buffer::Size() { return buf_.size(); }
 
-const char* Buffer::c_str() { return buf.c_str(); }
+const char* Buffer::Cstr() { return buf_.c_str(); }
 
-void Buffer::append(const char* _str) { buf.append(_str); }
+void Buffer::Append(const char* _str) { buf_.append(_str); }
 
-void Buffer::append(const char* _str, int _size) {
+void Buffer::Append(const char* _str, int _size) {
   for (int i = 0; i < _size; i++) {
-    if (_str[i] == '\0') break;
-    buf.push_back(_str[i]);
+    if (_str[i] == '\0') {
+      break;
+    }
+    buf_.push_back(_str[i]);
   }
 }
 
-void Buffer::setBuf(const char* _str) {
-  buf.clear();
-  buf.append(_str);
+void Buffer::SetBuf(const char* _str) {
+  buf_.clear();
+  buf_.append(_str);
 }
 
-void Buffer::clearBuffer() { buf.clear(); }
+void Buffer::ClearBuffer() { buf_.clear(); }
 
-}
+}  // namespace cppserver_core

@@ -8,11 +8,11 @@
 
 using namespace cppserver_core;
 
-void client_func(int num_msgs, int sleep_seconds, int thread_id) {
+void ClientFunc(int num_msgs, int sleep_seconds, int thread_id) {
   sleep(sleep_seconds);
 
   Socket* sock = new Socket();
-  sock->connect("127.0.0.1", 8888);
+  sock->Connect("127.0.0.1", 8888);
   Connection* conn = new Connection(nullptr, sock);
 
   for (int i = 0; i < num_msgs; i++) {
@@ -20,14 +20,14 @@ void client_func(int num_msgs, int sleep_seconds, int thread_id) {
     msg += std::to_string(thread_id);
     msg += ", count ";
     msg += std::to_string(i + 1);
-    conn->setWriteBuffer(msg.c_str());
-    conn->write();
-    if (conn->getState() == Connection::State::Closed) {
-      conn->close();
+    conn->SetWriteBuffer(msg.c_str());
+    conn->Write();
+    if (conn->GetState() == Connection::State::Closed) {
+      conn->Close();
       break;
     }
-    conn->read();
-    std::cout << conn->readBuffer() << std::endl;
+    conn->Read();
+    std::cout << conn->ReadBuffer() << std::endl;
   }
 
   // delete sock;
@@ -41,7 +41,7 @@ int main() {
 
   ThreadPool* pool = new ThreadPool(num_threads);
   for (int i = 0; i < num_threads; i++) {
-    pool->add(client_func, msgs, wait, i);
+    pool->Add(ClientFunc, msgs, wait, i);
   }
 
   delete pool;

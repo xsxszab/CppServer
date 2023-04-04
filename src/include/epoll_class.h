@@ -13,8 +13,8 @@ class Channel;
 
 class Epoll {
  private:
-  int epfd;
-  struct epoll_event* events;
+  int epfd_{-1};
+  struct epoll_event* events_{nullptr};
 
  public:
   Epoll();
@@ -23,9 +23,9 @@ class Epoll {
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Epoll)
 
   // void add_fd(int fd, uint32_t op);
-  std::vector<Channel*> poll(int timeout = -1);
+  std::vector<Channel*> Poll(int timeout = -1);
 
-  void updateChannel(Channel*);
+  void UpdateChannel(Channel* channel);
 };
 
 }  // namespace cppserver_core

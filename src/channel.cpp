@@ -8,49 +8,53 @@
 namespace cppserver_core {
 
 Channel::Channel(EventLoop* _el, int _fd)
-    : loop(_el), fd(_fd), listen_events(0), ready_events(0), in_epoll(false) {}
+    : loop_(_el),
+      fd_(_fd),
+      listen_events_(0),
+      ready_events_(0),
+      in_epoll_(false) {}
 
 Channel::~Channel() {
-  if (fd != -1) {
-    close(fd);
-    fd = -1;
+  if (fd_ != -1) {
+    close(fd_);
+    fd_ = -1;
   }
 }
 
-int Channel::getFd() { return fd; }
+int Channel::GetFd() { return fd_; }
 
-uint32_t Channel::getListenEvents() { return listen_events; }
+uint32_t Channel::GetListenEvents() { return listen_events_; }
 
-uint32_t Channel::getReadyEvents() { return ready_events; }
+uint32_t Channel::GetReadyEvents() { return ready_events_; }
 
-bool Channel::inEpoll() { return in_epoll; }
+bool Channel::InEpoll() { return in_epoll_; }
 
-void Channel::setInEpoll(bool _in_epoll) { in_epoll = _in_epoll; }
+void Channel::SetInEpoll(bool _in_epoll) { in_epoll_ = _in_epoll; }
 
-void Channel::useET() {
-  listen_events |= EPOLLET;
-  loop->updateChannel(this);
+void Channel::UseET() {
+  listen_events_ |= EPOLLET;
+  loop_->UpdateChannel(this);
 }
 
-void Channel::setReadyEvents(uint32_t _ev) { ready_events = _ev; }
+void Channel::SetReadyEvents(uint32_t ev) { ready_events_ = ev; }
 
-void Channel::setReadCallBack(std::function<void()> func) {
-  read_callback = func;
+void Channel::SetReadCallBack(std::function<void()> func) {
+  read_callback_ = func;
 }
 
-void Channel::handleEvent() {
-  if (ready_events & (EPOLLIN | EPOLLPRI)) {
-    read_callback();
+void Channel::HandleEvent() {
+  if (ready_events_ & (EPOLLIN | EPOLLPRI)) {
+    read_callback_();
   }
 
-  if (ready_events & EPOLLOUT) {
-    write_callback();
+  if (ready_events_ & EPOLLOUT) {
+    write_callback_();
   }
 }
 
-void Channel::enableReading() {
-  listen_events |= EPOLLIN | EPOLLPRI;
-  loop->updateChannel(this);
+void Channel::EnableReading() {
+  listen_events_ |= EPOLLIN | EPOLLPRI;
+  loop_->UpdateChannel(this);
 }
 
 }  // namespace cppserver_core

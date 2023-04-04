@@ -14,21 +14,21 @@ class Channel;
 
 class Acceptor {
  private:
-  EventLoop* loop;
-  Socket* sock;
-  Channel* channel;
+  EventLoop* loop_;
+  Socket* sock_;
+  Channel* channel_;
 
-  std::function<void(Socket*)> newConnectionCallBack;
+  std::function<void(Socket*)> new_connection_callback_;
 
  public:
-  explicit Acceptor(EventLoop* _loop);
+  explicit Acceptor(EventLoop* loop);
   ~Acceptor();
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Acceptor)
 
-  void acceptConnection();
+  void AcceptConnection();
 
-  void setNewConnectionCallBack(std::function<void(Socket*)>);
+  void SetNewConnectionCallBack(std::function<void(Socket*)> func);
 };
 
 }  // namespace cppserver_core

@@ -12,20 +12,20 @@
 
 namespace cppserver_core {
 
-Epoll::Epoll() : epfd(-1), events(nullptr) {
-  epfd = epoll_create1(0);
-  errif(epfd == -1, "epoll create error");
+Epoll::Epoll() {
+  epfd_ = epoll_create1(0);
+  Errif(epfd_ == -1, "epoll create error");
 
-  events = new epoll_event[MAX_EVENTS];
-  memset(events, '\0', sizeof(*events) * MAX_EVENTS);
+  events_ = new epoll_event[MAX_EVENTS];
+  memset(events_, '\0', sizeof(*events_) * MAX_EVENTS);
 }
 
 Epoll::~Epoll() {
-  if (epfd != -1) {
-    close(epfd);
-    epfd = -1;
+  if (epfd_ != -1) {
+    close(epfd_);
+    epfd_ = -1;
   }
-  delete[] events;
+  delete[] events_;
 }
 
 // void Epoll::add_fd(int fd, uint32_t op)
@@ -39,29 +39,29 @@ Epoll::~Epoll() {
 //     error");
 // }
 
-std::vector<Channel*> Epoll::poll(int timeout) {
+std::vector<Channel*> Epoll::Poll(int timeout) {
   std::vector<Channel*> active_channels;
-  int nfds = epoll_wait(epfd, events, MAX_EVENTS, timeout);
-  errif(nfds == -1, "epoll wait error");
+  int nfds = epoll_wait(epfd_, events_, MAX_EVENTS, timeout);
+  Errif(nfds == -1, "epoll wait error");
   for (int i = 0; i < nfds; i++) {
-    Channel* ch = (Channel*)events[i].data.ptr;
-    ch->setReadyEvents(events[i].events);
+    Channel* ch = (Channel*)events_[i].data.ptr;
+    ch->SetReadyEvents(events_[i].events);
     active_channels.emplace_back(ch);
   }
   return active_channels;
 }
 
-void Epoll::updateChannel(Channel* channel) {
-  int fd = channel->getFd();
-  struct epoll_event ev;
+void Epoll::UpdateChannel(Channel* channel) {
+  int fd = channel->GetFd();
+  struct epoll_event ev {};
   memset(&ev, '\0', sizeof(ev));
   ev.data.ptr = channel;
-  ev.events = channel->getListenEvents();
-  if (!channel->inEpoll()) {
-    errif(epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1, "epoll add error");
-    channel->setInEpoll();
+  ev.events = channel->GetListenEvents();
+  if (!channel->InEpoll()) {
+    Errif(epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &ev) == -1, "epoll add error");
+    channel->SetInEpoll();
   } else {
-    errif(epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev) == -1, "epoll modify error");
+    Errif(epoll_ctl(epfd_, EPOLL_CTL_MOD, fd, &ev) == -1, "epoll modify error");
   }
 }
 

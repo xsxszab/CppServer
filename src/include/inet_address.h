@@ -3,21 +3,25 @@
 
 #include <arpa/inet.h>
 
+#include "marcos.h"
+
 namespace cppserver_core {
 
 class InetAddress {
  public:
-  struct sockaddr_in addr;
-  socklen_t addr_len;
+  struct sockaddr_in addr_;
+  socklen_t addr_len_;
 
   InetAddress();
   InetAddress(const char* ip, uint16_t port);
   ~InetAddress();
 
-  void setAddr(sockaddr_in _addr, socklen_t _addr_len);
+  DISABLE_COPY_AND_MOVE_CONSTRUCT(InetAddress)
 
-  sockaddr_in getAddr();
-  socklen_t getAddrLen();
+  void SetAddr(sockaddr_in addr, socklen_t addr_len);
+
+  sockaddr_in GetAddr();
+  socklen_t GetAddrLen();
 };
 
 }  // namespace cppserver_core

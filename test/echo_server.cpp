@@ -9,20 +9,20 @@ int main() {
   EventLoop* main_loop = new EventLoop();
   Server* server = new Server(main_loop);
 
-  server->newConnect([](Connection* conn) {
-    std::cout << "new connection fd: " << conn->getSocket()->getFd()
+  server->NewConnect([](Connection* conn) {
+    std::cout << "new connection fd: " << conn->GetSocket()->GetFd()
               << std::endl;
   });
 
-  server->onMessage([](Connection* conn) {
-    std::cout << "message from client: " << conn->readBuffer() << std::endl;
-    if (conn->getState() == Connection::State::Connected) {
-      conn->setWriteBuffer(conn->readBuffer());
-      conn->write();
+  server->OnMessage([](Connection* conn) {
+    std::cout << "message from client: " << conn->ReadBuffer() << std::endl;
+    if (conn->GetState() == Connection::State::Connected) {
+      conn->SetWriteBuffer(conn->ReadBuffer());
+      conn->Write();
     }
   });
 
-  main_loop->loop();
+  main_loop->Loop();
 
   delete server;
   delete main_loop;

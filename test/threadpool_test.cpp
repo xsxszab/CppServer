@@ -4,16 +4,16 @@
 
 using namespace cppserver_core;
 
-void print_variable(int a, float b, const char* c) {
+void PrintVariable(int a, float b, const char* c) {
   std::cout << a << " " << b << " " << c << std::endl;
 }
 
-void print_message() { std::cout << "test message" << std::endl; }
+void PrintMessage() { std::cout << "test message" << std::endl; }
 
 int main() {
   ThreadPool* pool = new ThreadPool(std::thread::hardware_concurrency());
-  pool->add(std::bind(print_variable, 1, 2.3, "45678"));
-  pool->add(print_message);
+  pool->Add(std::bind(PrintVariable, 1, 2.3, "45678"));
+  pool->Add(PrintMessage);
 
   delete pool;
   return 0;
