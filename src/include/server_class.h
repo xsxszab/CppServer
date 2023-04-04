@@ -19,10 +19,12 @@ class Server {
   Acceptor* acceptor;
   ThreadPool* threadpool;
 
-  std::vector<EventLoop*> sub_reactor;
+  std::vector<EventLoop*> sub_reactors;
   std::unordered_map<int, Connection*> connections;
 
   std::function<void(Connection*)> on_connection_callback;
+  std::function<void(Connection*)> new_connection_callback;
+  std::function<void(Connection*)> on_message_callback;
 
  public:
   explicit Server(EventLoop*);
@@ -33,6 +35,8 @@ class Server {
   void newConnection(Socket*);
   void deleteConnection(Socket*);
   void onConnect(std::function<void(Connection*)>);
+  void onMessage(std::function<void(Connection*)>);
+  void newConnect(std::function<void(Connection*)>);
 };
 
 #endif

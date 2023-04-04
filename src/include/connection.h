@@ -30,14 +30,11 @@ class Connection {
 
   void setDeleteConnectionCallBack(std::function<void(Socket*)> const&);
   void setOnConnectCallBack(std::function<void(Connection*)> const&);
+  void setOnMessageCallBack(std::function<void(Connection*)> const&);
+  void business();
 
   State getState();
   void close();
-
-  void readNonBlocking();
-  void writeNonBlocking();
-  void readBlocking();
-  void writeBlocking();
 
   Buffer* getReadBuffer();
   const char* readBuffer();
@@ -56,8 +53,13 @@ class Connection {
   Channel* channel;
   std::function<void(Socket*)> delete_connection_callback;
   std::function<void(Connection*)> on_connect_callback;
-
+  std::function<void(Connection*)> on_message_callback;
   State state{State::Invalid};
+
+  void readNonBlocking();
+  void writeNonBlocking();
+  void readBlocking();
+  void writeBlocking();
 };
 
 #endif

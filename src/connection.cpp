@@ -73,7 +73,17 @@ void Connection::setDeleteConnectionCallBack(
 void Connection::setOnConnectCallBack(
     std::function<void(Connection*)> const& func) {
   on_connect_callback = func;
-  channel->setReadCallBack([this]() { on_connect_callback(this); });
+}
+
+void Connection::setOnMessageCallBack(
+    std::function<void(Connection*)> const& func) {
+  on_message_callback = func;
+  channel->setReadCallBack(std::bind(&Connection::business, this));
+}
+
+void Connection::business() {
+  read();
+  on_message_callback(this);
 }
 
 Connection::State Connection::getState() { return state; }
@@ -181,3 +191,5 @@ const char* Connection::writeBuffer() { return write_buffer->c_str(); }
 void Connection::setWriteBuffer(const char* str) { write_buffer->setBuf(str); }
 
 void Connection::getLineWriteBuffer() { write_buffer->getLine(); }
+
+Socket* Connection::getSocket() { return sock; }
