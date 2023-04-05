@@ -1,5 +1,5 @@
 ### A simple webserver written in cpp
-TODO: project still in progress
+This project is still in progress, i.e., it may contain lots of bugs.
 
 
 ### References

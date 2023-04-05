@@ -14,6 +14,8 @@
 
 namespace cppserver_core {
 
+class Logger;
+
 class LogLevel {
  public:
   enum Level {
@@ -30,7 +32,7 @@ class LogLevel {
 class LogEvent {
  public:
   using ptr = std::shared_ptr<LogEvent>;
-  LogEvent();
+  LogEvent() = default;
 
   const char* GetFileName() const;
   int32_t GetLineNum() const;
@@ -48,33 +50,6 @@ class LogEvent {
   std::string message_;
 };
 
-class Logger {
- public:
-  using ptr = std::shared_ptr<Logger>;
-
-  Logger(const std::string& name = "empty_name");
-  void Log(LogLevel::Level level, LogEvent::ptr event);
-
-  void info(LogLevel::Level level);
-  void debug(LogLevel::Level level);
-  void warn(LogLevel::Level level);
-  void error(LogLevel::Level level);
-  void fatal(LogLevel::Level level);
-
-  void AddAppender(Appender::ptr appender);
-  void DelAppender(Appender::ptr appender);
-
-  LogLevel::Level GetLevel() const;
-  void SetLevel(LogLevel::Level level);
-  std::string GetName() const;
-  void SetName(const std::string& name);
-
- private:
-  std::string name_;
-  LogLevel::Level level_;
-  std::list<Appender::ptr> appenders_;
-};
-
 class FormatItem {
  public:
   using ptr = std::shared_ptr<FormatItem>;
@@ -87,31 +62,35 @@ class FormatItem {
 
 class MessageFormatItem : public FormatItem {
  public:
+  MessageFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class LevelFormatItem : public FormatItem {
  public:
+  LevelFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class MsElapseFormatItem : public FormatItem {
  public:
+  MsElapseFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class ThreadIdFormatItem : public FormatItem {
  public:
+  ThreadIdFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class StringFormatItem : public FormatItem {
  public:
-  StringFormatItem(const std::string& _str);
+  StringFormatItem(const std::string& _str = "");
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 
@@ -121,18 +100,21 @@ class StringFormatItem : public FormatItem {
 
 class NewLineFormatItem : public FormatItem {
  public:
+  NewLineFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class LineNumFormatItem : public FormatItem {
  public:
+  LineNumFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class FileNameFormatItem : public FormatItem {
  public:
+  FileNameFormatItem(const std::string& _str = "") : FormatItem(_str) {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
@@ -202,6 +184,33 @@ class FileAppender : public Appender {
  private:
   std::string file_name_;
   std::ofstream file_stream_;
+};
+
+class Logger : public std::enable_shared_from_this<Logger> {
+ public:
+  using ptr = std::shared_ptr<Logger>;
+
+  Logger(const std::string& name = "empty_name");
+  void Log(LogLevel::Level level, LogEvent::ptr event);
+
+  void info(LogEvent::ptr event);
+  void debug(LogEvent::ptr event);
+  void warn(LogEvent::ptr event);
+  void error(LogEvent::ptr event);
+  void fatal(LogEvent::ptr event);
+
+  void AddAppender(Appender::ptr appender);
+  void DelAppender(Appender::ptr appender);
+
+  LogLevel::Level GetLevel() const;
+  void SetLevel(LogLevel::Level level);
+  std::string GetName() const;
+  void SetName(const std::string& name);
+
+ private:
+  std::string name_;
+  LogLevel::Level level_;
+  std::list<Appender::ptr> appenders_;
 };
 
 }  // namespace cppserver_core

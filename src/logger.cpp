@@ -27,22 +27,22 @@ Logger::Logger(const std::string& name) : name_(name) {}
 void Logger::Log(LogLevel::Level level, LogEvent::ptr event) {
   if (level >= level_) {
     for (auto& appender : appenders_) {
-      appender->Log(std::make_shared<Logger>(this), level, event);
+      appender->Log(shared_from_this(), level, event);
     }
   }
 }
 
-void Logger::info(LogLevel::Level level) {}
+void Logger::info(LogEvent::ptr event) { Log(LogLevel::INFO, event); }
 
-void Logger::debug(LogLevel::Level level) {}
+void Logger::debug(LogEvent::ptr event) { Log(LogLevel::DEBUG, event); }
 
-void Logger::warn(LogLevel::Level level) {}
+void Logger::warn(LogEvent::ptr event) { Log(LogLevel::WARN, event); }
 
-void Logger::error(LogLevel::Level level) {}
+void Logger::error(LogEvent::ptr event) { Log(LogLevel::ERROR, event); }
 
-void Logger::fatal(LogLevel::Level level) {}
+void Logger::fatal(LogEvent::ptr event) { Log(LogLevel::FATAL, event); }
 
-void StdoutAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
+void StdoutAppender::Log(Logger::ptr logger, LogLevel::Level level,
                          LogEvent::ptr event) {
   if (level >= level_) {
     std::cout << formatter_->format(level, event);
@@ -52,7 +52,7 @@ void StdoutAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
 FileAppender::FileAppender(const std::string& file_name)
     : file_name_{file_name} {}
 
-void FileAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
+void FileAppender::Log(Logger::ptr logger, LogLevel::Level level,
                        LogEvent::ptr event) {
   if (level >= level_) {
     file_stream_ << formatter_->format(level, event);
@@ -288,8 +288,7 @@ void NewLineFormatItem::format(std::ostream& out, LogLevel::Level level,
   out << '\n';
 }
 
-StringFormatItem::StringFormatItem(const std::string& _str)
-    : str_{_str}, FormatItem(_str) {}
+StringFormatItem::StringFormatItem(const std::string& _str) : str_{_str} {}
 
 void StringFormatItem::format(std::ostream& out, LogLevel::Level level,
                               LogEvent::ptr event) {
