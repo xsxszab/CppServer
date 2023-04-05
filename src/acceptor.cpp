@@ -34,12 +34,11 @@ void Acceptor::AcceptConnection() const {
             << " IP: " << inet_ntoa(clnt_addr->GetAddr().sin_addr)
             << " Port: " << ntohs(clnt_addr->GetAddr().sin_port) << std::endl;
   clnt_sock->Setnonblocking();
-  new_connection_callback_(clnt_sock);
+  new_connection_callback_(clnt_sock->GetFd());
   delete clnt_addr;
 }
 
-void Acceptor::SetNewConnectionCallBack(
-    std::function<void(Socket*)> const& func) {
+void Acceptor::SetNewConnectionCallBack(std::function<void(int)> const& func) {
   new_connection_callback_ = func;
 }
 

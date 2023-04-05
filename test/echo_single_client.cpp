@@ -8,7 +8,7 @@ int main() {
   core::Socket* sock = new core::Socket();
   sock->Connect("127.0.0.1", 8888);
 
-  core::Connection* conn = new core::Connection(nullptr, sock);
+  core::Connection* conn = new core::Connection(nullptr, sock->GetFd());
   while (true) {
     conn->GetLineWriteBuffer();
     conn->Write();

@@ -15,8 +15,9 @@
 
 namespace cppserver_core {
 
-Connection::Connection(EventLoop* loop, Socket* _sock) {
-  sock_ = _sock;
+Connection::Connection(EventLoop* loop, int fd) {
+  sock_ = std::make_unique<Socket>();
+  sock_->SetFd(fd);
   if (loop != nullptr) {  // bind to a event loop
     channel_ = std::make_unique<Channel>(loop, sock_->GetFd());
     channel_->EnableRead();
@@ -57,7 +58,7 @@ void Connection::Write() {
 }
 
 void Connection::SetDeleteConnectionCallBack(
-    std::function<void(Socket*)> const& func) {
+    std::function<void(int)> const& func) {
   delete_connection_callback_ = func;
 }
 
@@ -82,7 +83,7 @@ Connection::State Connection::GetState() { return state_; }
 void Connection::Close() {
   // std::cout << "close connection, call delete callback function" <<
   // std::endl;
-  delete_connection_callback_(sock_);
+  delete_connection_callback_(sock_->GetFd());
 }
 
 void Connection::ReadNonBlocking() {
@@ -184,6 +185,6 @@ void Connection::SetWriteBuffer(const char* str) { write_buffer_->SetBuf(str); }
 
 void Connection::GetLineWriteBuffer() { write_buffer_->GetLine(); }
 
-Socket* Connection::GetSocket() { return sock_; }
+Socket* Connection::GetSocket() { return sock_.get(); }
 
 }  // namespace cppserver_core

@@ -50,22 +50,21 @@ void Server::Start() {
   main_reactor_->Loop();
 }
 
-void Server::NewConnection(Socket* sock) {
-  Errif(sock->GetFd() == -1, "invalid socket fd");
-  int rand_choice = sock->GetFd() % sub_reactors_.size();
-  Connection* conn = new Connection(sub_reactors_[rand_choice], sock);
+void Server::NewConnection(int fd) {
+  Errif(fd == -1, "invalid socket fd");
+  int rand_choice = fd % sub_reactors_.size();
+  Connection* conn = new Connection(sub_reactors_[rand_choice], fd);
   // std::cout << "init new connection, register callback functions" <<
   // std::endl;
   conn->SetDeleteConnectionCallBack(
       std::bind(&Server::DeleteConnection, this, std::placeholders::_1));
   // conn->setOnConnectCallBack(on_connection_callback);
   conn->SetOnMessageCallBack(on_message_callback_);
-  connections_[sock->GetFd()] = conn;
+  connections_[fd] = conn;
 }
 
-void Server::DeleteConnection(Socket* sock) {
+void Server::DeleteConnection(int fd) {
   std::cout << "delete registered connection instance" << std::endl;
-  int fd = sock->GetFd();
   if (fd != -1) {
     auto it = connections_.find(fd);
     if (it != connections_.end()) {

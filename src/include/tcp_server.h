@@ -37,8 +37,8 @@ class Server {
 
   void Start();
 
-  void NewConnection(Socket* sock);
-  void DeleteConnection(Socket* sock);
+  void NewConnection(int fd);
+  void DeleteConnection(int fd);
   void OnConnect(std::function<void(Connection*)> func);
   void OnMessage(std::function<void(Connection*)> func);
   void NewConnect(std::function<void(Connection*)> func);

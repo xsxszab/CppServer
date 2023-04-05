@@ -94,6 +94,8 @@ int Socket::Accept(InetAddress* _addr) {
 
 bool Socket::IsNonBlocking() { return (fcntl(fd_, F_GETFL) & O_NONBLOCK) != 0; }
 
+void Socket::SetFd(int _fd) { fd_ = _fd; }
+
 int Socket::GetFd() { return fd_; }
 
 }  // namespace cppserver_core

@@ -18,7 +18,7 @@ class Acceptor {
   Socket* sock_;
   Channel* channel_;
 
-  std::function<void(Socket*)> new_connection_callback_;
+  std::function<void(int)> new_connection_callback_;
 
  public:
   explicit Acceptor(EventLoop* loop);
@@ -28,7 +28,7 @@ class Acceptor {
 
   void AcceptConnection() const;
 
-  void SetNewConnectionCallBack(std::function<void(Socket*)> const& func);
+  void SetNewConnectionCallBack(std::function<void(int)> const& func);
 };
 
 }  // namespace cppserver_core

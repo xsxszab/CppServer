@@ -30,6 +30,7 @@ class Socket {
 
   bool IsNonBlocking();
 
+  void SetFd(int _fd);
   int GetFd();
 };
 

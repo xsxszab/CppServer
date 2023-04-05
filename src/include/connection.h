@@ -23,7 +23,7 @@ class Connection {
     Failed = 5,
   };
 
-  Connection(EventLoop* _loop, Socket* _sock);
+  Connection(EventLoop* _loop, int fd);
   ~Connection();
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Connection)
@@ -31,7 +31,7 @@ class Connection {
   void Read();
   void Write();
 
-  void SetDeleteConnectionCallBack(std::function<void(Socket*)> const& func);
+  void SetDeleteConnectionCallBack(std::function<void(int)> const& func);
   void SetOnConnectCallBack(std::function<void(Connection*)> const& func);
   void SetOnMessageCallBack(std::function<void(Connection*)> const& func);
   void Business();
@@ -51,10 +51,9 @@ class Connection {
  private:
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;
-  // std::unique_ptr<Socket> sock_;
+  std::unique_ptr<Socket> sock_;
   std::unique_ptr<Channel> channel_;
-  Socket* sock_;
-  std::function<void(Socket*)> delete_connection_callback_;
+  std::function<void(int)> delete_connection_callback_;
   std::function<void(Connection*)> on_connect_callback_;
   std::function<void(Connection*)> on_message_callback_;
   State state_{State::Invalid};
