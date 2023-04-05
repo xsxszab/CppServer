@@ -26,9 +26,9 @@ class Acceptor {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Acceptor)
 
-  void AcceptConnection();
+  void AcceptConnection() const;
 
-  void SetNewConnectionCallBack(std::function<void(Socket*)> func);
+  void SetNewConnectionCallBack(std::function<void(Socket*)> const& func);
 };
 
 }  // namespace cppserver_core

@@ -38,9 +38,9 @@ class Connection {
   State GetState();
   void Close();
 
-  Buffer* GetReadBuffer();
+  Buffer* GetReadBuffer() const;
   const char* ReadBuffer();
-  Buffer* GetWriteBuffer();
+  Buffer* GetWriteBuffer() const;
   const char* WriteBuffer();
   void SetWriteBuffer(const char* str);
   void GetLineWriteBuffer();

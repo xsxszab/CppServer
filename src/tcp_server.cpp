@@ -1,4 +1,4 @@
-#include "server_class.h"
+#include "tcp_server.h"
 
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -17,28 +17,20 @@
 #include "thread_pool.h"
 #include "utilfunc.h"
 
-#define MAX_EVENTS 1024
-#define BUFFER_SIZE 1024
-
 namespace cppserver_core {
 
-Server::Server(EventLoop* _loop) : main_reactor_(_loop), acceptor_(nullptr) {
-  acceptor_ = new Acceptor(main_reactor_);
+Server::Server() : acceptor_(nullptr) {
+  main_reactor_ = std::make_unique<EventLoop>();
+  acceptor_ = std::make_unique<Acceptor>(main_reactor_.get());
   acceptor_->SetNewConnectionCallBack(
       std::bind(&Server::NewConnection, this, std::placeholders::_1));
 
   int num_threads = std::thread::hardware_concurrency();
   std::cout << "thread pool size: " << num_threads << std::endl;
-  threadpool_ = new ThreadPool(num_threads);
+  threadpool_ = std::make_unique<ThreadPool>(num_threads);
 
   for (int i = 0; i < num_threads; i++) {
     sub_reactors_.push_back(new EventLoop());
-  }
-
-  for (int i = 0; i < num_threads; i++) {
-    std::function<void()> sub_loop =
-        std::bind(&EventLoop::Loop, sub_reactors_[i]);
-    threadpool_->Add(std::move(sub_loop));
   }
 }
 
@@ -46,8 +38,16 @@ Server::~Server() {
   for (auto* loop : sub_reactors_) {
     delete loop;
   }
-  delete acceptor_;
-  delete threadpool_;
+}
+
+void Server::Start() {
+  for (unsigned int i = 0; i < sub_reactors_.size(); i++) {
+    std::function<void()> sub_loop =
+        std::bind(&EventLoop::Loop, sub_reactors_[i]);
+    threadpool_->Add(std::move(sub_loop));
+  }
+
+  main_reactor_->Loop();
 }
 
 void Server::NewConnection(Socket* sock) {

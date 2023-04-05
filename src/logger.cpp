@@ -1,3 +1,3 @@
 #include "logger.h"
 
-namespace cppserver_log {}
+namespace cppserver_core {}

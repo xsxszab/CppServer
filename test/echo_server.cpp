@@ -3,28 +3,25 @@
 
 #include "cppserver.h"
 
-using namespace cppserver_core;
+namespace core = cppserver_core;
 
 int main() {
-  EventLoop* main_loop = new EventLoop();
-  Server* server = new Server(main_loop);
+  auto server = std::make_unique<core::Server>();
 
-  server->NewConnect([](Connection* conn) {
+  server->NewConnect([](core::Connection* conn) {
     std::cout << "new connection fd: " << conn->GetSocket()->GetFd()
               << std::endl;
   });
 
-  server->OnMessage([](Connection* conn) {
+  server->OnMessage([](core::Connection* conn) {
     std::cout << "message from client: " << conn->ReadBuffer() << std::endl;
-    if (conn->GetState() == Connection::State::Connected) {
+    if (conn->GetState() == core::Connection::State::Connected) {
       conn->SetWriteBuffer(conn->ReadBuffer());
       conn->Write();
     }
   });
 
-  main_loop->Loop();
+  server->Start();
 
-  delete server;
-  delete main_loop;
   return 0;
 }

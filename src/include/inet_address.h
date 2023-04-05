@@ -20,8 +20,8 @@ class InetAddress {
 
   void SetAddr(sockaddr_in addr, socklen_t addr_len);
 
-  sockaddr_in GetAddr();
-  socklen_t GetAddrLen();
+  sockaddr_in GetAddr() const;
+  socklen_t GetAddrLen() const;
 };
 
 }  // namespace cppserver_core

@@ -1,7 +1,8 @@
-#ifndef SERVER_CLASS_H
-#define SERVER_CLASS_H
+#ifndef TCP_SERVER_H
+#define TCP_SERVER_H
 
 #include <functional>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -17,9 +18,9 @@ class Connection;
 
 class Server {
  private:
-  EventLoop* main_reactor_;
-  Acceptor* acceptor_;
-  ThreadPool* threadpool_;
+  std::unique_ptr<EventLoop> main_reactor_;
+  std::unique_ptr<Acceptor> acceptor_;
+  std::unique_ptr<ThreadPool> threadpool_;
 
   std::vector<EventLoop*> sub_reactors_;
   std::unordered_map<int, Connection*> connections_;
@@ -29,10 +30,12 @@ class Server {
   std::function<void(Connection*)> on_message_callback_;
 
  public:
-  explicit Server(EventLoop* _loop);
+  explicit Server();
   ~Server();
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Server)
+
+  void Start();
 
   void NewConnection(Socket* sock);
   void DeleteConnection(Socket* sock);

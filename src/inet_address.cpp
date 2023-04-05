@@ -23,8 +23,8 @@ void InetAddress::SetAddr(sockaddr_in addr, socklen_t addr_len) {
   addr_len_ = addr_len;
 }
 
-sockaddr_in InetAddress::GetAddr() { return addr_; }
+sockaddr_in InetAddress::GetAddr() const { return addr_; }
 
-socklen_t InetAddress::GetAddrLen() { return addr_len_; }
+socklen_t InetAddress::GetAddrLen() const { return addr_len_; }
 
 }  // namespace cppserver_core

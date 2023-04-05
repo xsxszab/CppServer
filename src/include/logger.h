@@ -1,7 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-namespace cppserver_log {
+namespace cppserver_core {
 
 class LogEvent {};
 
@@ -11,6 +11,6 @@ class Formatter {};
 
 class Appender {};
 
-}  // namespace cppserver_log
+}  // namespace cppserver_core
 
 #endif

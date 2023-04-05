@@ -27,7 +27,7 @@ Acceptor::~Acceptor() {
   delete channel_;
 }
 
-void Acceptor::AcceptConnection() {
+void Acceptor::AcceptConnection() const {
   InetAddress* clnt_addr = new InetAddress();
   Socket* clnt_sock = new Socket(sock_->Accept(clnt_addr));
   std::cout << "new client fd: " << clnt_sock->GetFd()
@@ -38,7 +38,8 @@ void Acceptor::AcceptConnection() {
   delete clnt_addr;
 }
 
-void Acceptor::SetNewConnectionCallBack(std::function<void(Socket*)> func) {
+void Acceptor::SetNewConnectionCallBack(
+    std::function<void(Socket*)> const& func) {
   new_connection_callback_ = func;
 }
 

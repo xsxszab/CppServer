@@ -21,13 +21,13 @@ Channel::~Channel() {
   }
 }
 
-int Channel::GetFd() { return fd_; }
+int Channel::GetFd() const { return fd_; }
 
-uint32_t Channel::GetListenEvents() { return listen_events_; }
+uint32_t Channel::GetListenEvents() const { return listen_events_; }
 
-uint32_t Channel::GetReadyEvents() { return ready_events_; }
+uint32_t Channel::GetReadyEvents() const { return ready_events_; }
 
-bool Channel::InEpoll() { return in_epoll_; }
+bool Channel::InEpoll() const { return in_epoll_; }
 
 void Channel::SetInEpoll(bool _in_epoll) { in_epoll_ = _in_epoll; }
 

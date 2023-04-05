@@ -34,6 +34,7 @@ class ThreadPool {
       -> std::future<typename std::result_of<F(Args...)>::type>;
 };
 
+// perfect forwarding
 template <class F, class... Args>
 inline auto ThreadPool::Add(F&& f, Args&&... args)
     -> std::future<typename std::result_of<F(Args...)>::type> {

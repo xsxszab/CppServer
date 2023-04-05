@@ -2,17 +2,17 @@
 
 #include "cppserver.h"
 
-using namespace cppserver_core;
+namespace core = cppserver_core;
 
 int main() {
-  Socket* sock = new Socket();
+  core::Socket* sock = new core::Socket();
   sock->Connect("127.0.0.1", 8888);
 
-  Connection* conn = new Connection(nullptr, sock);
+  core::Connection* conn = new core::Connection(nullptr, sock);
   while (true) {
     conn->GetLineWriteBuffer();
     conn->Write();
-    if (conn->GetState() == Connection::State::Closed) {
+    if (conn->GetState() == core::Connection::State::Closed) {
       conn->Close();
       std::cout << "connection closed" << std::endl;
       break;

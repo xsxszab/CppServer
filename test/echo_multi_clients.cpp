@@ -6,14 +6,14 @@
 
 #include "cppserver.h"
 
-using namespace cppserver_core;
+namespace core = cppserver_core;
 
 void ClientFunc(int num_msgs, int sleep_seconds, int thread_id) {
   sleep(sleep_seconds);
 
-  Socket* sock = new Socket();
+  core::Socket* sock = new core::Socket();
   sock->Connect("127.0.0.1", 8888);
-  Connection* conn = new Connection(nullptr, sock);
+  core::Connection* conn = new core::Connection(nullptr, sock);
 
   for (int i = 0; i < num_msgs; i++) {
     std::string msg = "echo from client fd ";
@@ -22,7 +22,7 @@ void ClientFunc(int num_msgs, int sleep_seconds, int thread_id) {
     msg += std::to_string(i + 1);
     conn->SetWriteBuffer(msg.c_str());
     conn->Write();
-    if (conn->GetState() == Connection::State::Closed) {
+    if (conn->GetState() == core::Connection::State::Closed) {
       conn->Close();
       break;
     }
@@ -39,7 +39,7 @@ int main() {
   int msgs = 100;
   int wait = 0;
 
-  ThreadPool* pool = new ThreadPool(num_threads);
+  core::ThreadPool* pool = new core::ThreadPool(num_threads);
   for (int i = 0; i < num_threads; i++) {
     pool->Add(ClientFunc, msgs, wait, i);
   }

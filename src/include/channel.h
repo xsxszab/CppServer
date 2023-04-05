@@ -32,10 +32,10 @@ class Channel {
 
   void EnableReading();
 
-  int GetFd();
-  uint32_t GetListenEvents();
-  uint32_t GetReadyEvents();
-  bool InEpoll();
+  int GetFd() const;
+  uint32_t GetListenEvents() const;
+  uint32_t GetReadyEvents() const;
+  bool InEpoll() const;
   void SetInEpoll(bool _in_epoll = true);
 
   void UseET();

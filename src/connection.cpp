@@ -183,11 +183,11 @@ void Connection::WriteBlocking() {
   }
 }
 
-Buffer* Connection::GetReadBuffer() { return read_buffer_; }
+Buffer* Connection::GetReadBuffer() const { return read_buffer_; }
 
 const char* Connection::ReadBuffer() { return read_buffer_->Cstr(); }
 
-Buffer* Connection::GetWriteBuffer() { return write_buffer_; }
+Buffer* Connection::GetWriteBuffer() const { return write_buffer_; }
 
 const char* Connection::WriteBuffer() { return write_buffer_->Cstr(); }
 

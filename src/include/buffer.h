@@ -17,12 +17,13 @@ class Buffer {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Buffer)
 
-  ssize_t Size();
+  ssize_t Size() const;
   void Append(const char* _str);
   void Append(const char* _str, int _size);
 
   void SetBuf(const char* _str);
-  const char* Cstr();
+  const std::string& GetBuf();
+  const char* Cstr() const;
 
   void ClearBuffer();
   void GetLine();
