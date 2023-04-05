@@ -1,3 +1,6 @@
+#ifndef CPPSERVER_H
+#define CPPSERVER_H
+
 #include "acceptor.h"
 #include "buffer.h"
 #include "channel.h"
@@ -9,3 +12,5 @@
 #include "socket_class.h"
 #include "tcp_server.h"
 #include "thread_pool.h"
+
+#endif

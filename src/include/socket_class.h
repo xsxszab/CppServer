@@ -9,6 +9,7 @@ namespace cppserver_core {
 
 class InetAddress;
 
+// wrapper class for linux socket
 class Socket {
  private:
   int fd_{-1};
@@ -22,7 +23,7 @@ class Socket {
 
   void Bind(InetAddress* _addr);
   void Listen();
-  void Setnonblocking();
+  void Setnonblocking();  // set O_NONBLOCK flag
 
   void Connect(InetAddress* addr);
   void Connect(const char* ip, uint16_t port);

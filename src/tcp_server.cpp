@@ -52,8 +52,11 @@ void Server::Start() {
 
 void Server::NewConnection(int fd) {
   Errif(fd == -1, "invalid socket fd");
+  // randomly assign new connection to sub reactors.
+  // TODO: write better dispatching logic
   int rand_choice = fd % sub_reactors_.size();
   Connection* conn = new Connection(sub_reactors_[rand_choice], fd);
+
   // std::cout << "init new connection, register callback functions" <<
   // std::endl;
   conn->SetDeleteConnectionCallBack(

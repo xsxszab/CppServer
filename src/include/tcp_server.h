@@ -35,6 +35,7 @@ class Server {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Server)
 
+  // push sub reactors into threadpool, start main reactor loop
   void Start();
 
   void NewConnection(int fd);

@@ -1,7 +1,11 @@
 #include "logger.h"
 
-namespace cppserver_core {
+namespace cppserver_logger {
 void Logger::AddAppender(Appender::ptr appender) {
+  if (!appender->GetFormatter()) {  // if the appender does not has a formatter
+                                    // yet, use the default formatter
+    appender->SetFormatter(formatter_);
+  }
   appenders_.push_back(appender);
 }
 
@@ -22,7 +26,10 @@ std::string Logger::GetName() const { return name_; }
 
 void Logger::SetName(const std::string& name) { name_ = name; }
 
-Logger::Logger(const std::string& name) : name_(name) {}
+Logger::Logger(const std::string& name)
+    : name_(name), level_(LogLevel::Level::INFO) {
+  formatter_.reset(new Formatter("%d [%p] %f %l %m %n "));
+}
 
 void Logger::Log(LogLevel::Level level, LogEvent::ptr event) {
   if (level >= level_) {
@@ -42,7 +49,7 @@ void Logger::error(LogEvent::ptr event) { Log(LogLevel::ERROR, event); }
 
 void Logger::fatal(LogEvent::ptr event) { Log(LogLevel::FATAL, event); }
 
-void StdoutAppender::Log(Logger::ptr logger, LogLevel::Level level,
+void StdoutAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
                          LogEvent::ptr event) {
   if (level >= level_) {
     std::cout << formatter_->format(level, event);
@@ -52,7 +59,7 @@ void StdoutAppender::Log(Logger::ptr logger, LogLevel::Level level,
 FileAppender::FileAppender(const std::string& file_name)
     : file_name_{file_name} {}
 
-void FileAppender::Log(Logger::ptr logger, LogLevel::Level level,
+void FileAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
                        LogEvent::ptr event) {
   if (level >= level_) {
     file_stream_ << formatter_->format(level, event);
@@ -68,6 +75,8 @@ bool FileAppender::Reopen() {
 
   return !!file_stream_;
 }
+
+Appender::~Appender() {}
 
 Formatter::ptr Appender::GetFormatter() const { return formatter_; }
 
@@ -295,4 +304,4 @@ void StringFormatItem::format(std::ostream& out, LogLevel::Level level,
   out << str_;
 }
 
-}  // namespace cppserver_core
+}  // namespace cppserver_logger

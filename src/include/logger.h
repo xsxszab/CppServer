@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace cppserver_core {
+namespace cppserver_logger {
 
 class Logger;
 
@@ -208,11 +208,12 @@ class Logger : public std::enable_shared_from_this<Logger> {
   void SetName(const std::string& name);
 
  private:
-  std::string name_;
-  LogLevel::Level level_;
+  std::string name_;       // logger name
+  LogLevel::Level level_;  // log level, lower level logs will be omitted
   std::list<Appender::ptr> appenders_;
+  Formatter::ptr formatter_;  // default formatter
 };
 
-}  // namespace cppserver_core
+}  // namespace cppserver_logger
 
 #endif

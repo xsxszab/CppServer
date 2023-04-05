@@ -26,7 +26,7 @@ class Buffer {
   const char* Cstr() const;
 
   void ClearBuffer();
-  void GetLine();
+  void GetLine();  // get one line from stdin input
 };
 
 }  // namespace cppserver_core

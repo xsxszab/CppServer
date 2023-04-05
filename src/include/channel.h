@@ -12,6 +12,7 @@ namespace cppserver_core {
 class Epoll;
 class EventLoop;
 
+// wrapper class for epoll_event
 class Channel {
  private:
   EventLoop* loop_;
@@ -38,7 +39,7 @@ class Channel {
   bool InEpoll() const;
   void SetInEpoll(bool _in_epoll = true);
 
-  void UseET();
+  void UseET();  // set EPOLLET flag
 
   void SetReadyEvents(uint32_t ev);
 

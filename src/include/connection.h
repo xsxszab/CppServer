@@ -13,6 +13,8 @@ class Socket;
 class Channel;
 class Buffer;
 
+// class respobsible for handling TCP connections.
+// one Connection instance corresponds to one TCP connection.
 class Connection {
  public:
   enum State {
