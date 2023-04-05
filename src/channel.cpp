@@ -52,7 +52,7 @@ void Channel::HandleEvent() {
   }
 }
 
-void Channel::EnableReading() {
+void Channel::EnableRead() {
   listen_events_ |= EPOLLIN | EPOLLPRI;
   loop_->UpdateChannel(this);
 }

@@ -30,7 +30,7 @@ class Channel {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Channel)
 
-  void EnableReading();
+  void EnableRead();
 
   int GetFd() const;
   uint32_t GetListenEvents() const;

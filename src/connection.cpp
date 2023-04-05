@@ -15,31 +15,20 @@
 
 namespace cppserver_core {
 
-Connection::Connection(EventLoop* _loop, Socket* _sock)
-    : loop_(_loop),
-      read_buffer_(nullptr),
-      write_buffer_(nullptr),
-      sock_(_sock),
-      channel_(nullptr) {
-  if (loop_ != nullptr) {  // bind to a event loop
-    channel_ = new Channel(loop_, sock_->GetFd());
-    channel_->EnableReading();
+Connection::Connection(EventLoop* loop, Socket* _sock) {
+  sock_ = _sock;
+  if (loop != nullptr) {  // bind to a event loop
+    channel_ = std::make_unique<Channel>(loop, sock_->GetFd());
+    channel_->EnableRead();
     channel_->UseET();
   }
 
-  read_buffer_ = new Buffer();
-  write_buffer_ = new Buffer();
+  read_buffer_ = std::make_unique<Buffer>();
+  write_buffer_ = std::make_unique<Buffer>();
   state_ = State::Connected;
 }
 
-Connection::~Connection() {
-  if (loop_ != nullptr) {
-    delete channel_;
-  }
-  delete sock_;
-  delete read_buffer_;
-  delete write_buffer_;
-}
+Connection::~Connection() {}
 
 void Connection::Read() {
   if (state_ != State::Connected) {
@@ -183,11 +172,11 @@ void Connection::WriteBlocking() {
   }
 }
 
-Buffer* Connection::GetReadBuffer() const { return read_buffer_; }
+Buffer* Connection::GetReadBuffer() const { return read_buffer_.get(); }
 
 const char* Connection::ReadBuffer() { return read_buffer_->Cstr(); }
 
-Buffer* Connection::GetWriteBuffer() const { return write_buffer_; }
+Buffer* Connection::GetWriteBuffer() const { return write_buffer_.get(); }
 
 const char* Connection::WriteBuffer() { return write_buffer_->Cstr(); }
 

@@ -2,6 +2,7 @@
 #define CONNECTION_H
 
 #include <functional>
+#include <memory>
 
 #include "marcos.h"
 
@@ -48,11 +49,11 @@ class Connection {
   Socket* GetSocket();
 
  private:
-  EventLoop* loop_;
-  Buffer* read_buffer_;
-  Buffer* write_buffer_;
+  std::unique_ptr<Buffer> read_buffer_;
+  std::unique_ptr<Buffer> write_buffer_;
+  // std::unique_ptr<Socket> sock_;
+  std::unique_ptr<Channel> channel_;
   Socket* sock_;
-  Channel* channel_;
   std::function<void(Socket*)> delete_connection_callback_;
   std::function<void(Connection*)> on_connect_callback_;
   std::function<void(Connection*)> on_message_callback_;
