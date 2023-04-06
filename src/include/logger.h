@@ -32,14 +32,15 @@ class LogLevel {
 class LogEvent {
  public:
   using ptr = std::shared_ptr<LogEvent>;
-  LogEvent() = default;
+  LogEvent(const char* file_name, int32_t line_num, uint32_t ms_elapse,
+           uint32_t thread_id, uint64_t time, const std::string& message);
 
   const char* GetFileName() const;
   int32_t GetLineNum() const;
   uint32_t GetMsElapse() const;
   uint32_t GetThreadId() const;
   uint64_t GetTime() const;
-  std::string GetMessage() const;
+  const std::string& GetMessage() const;
 
  private:
   const char* file_name_{nullptr};
@@ -47,13 +48,13 @@ class LogEvent {
   uint32_t ms_elapse_{0};
   uint32_t thread_id_{0};
   uint64_t time_{0};
-  std::string message_;
+  std::string msg_;
 };
 
 class FormatItem {
  public:
   using ptr = std::shared_ptr<FormatItem>;
-  FormatItem(const std::string& format = "") {}
+  FormatItem() {}
   virtual ~FormatItem(){};
 
   virtual void format(std::ostream& out, LogLevel::Level level,
@@ -62,28 +63,28 @@ class FormatItem {
 
 class MessageFormatItem : public FormatItem {
  public:
-  MessageFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  MessageFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class LevelFormatItem : public FormatItem {
  public:
-  LevelFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  LevelFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class MsElapseFormatItem : public FormatItem {
  public:
-  MsElapseFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  MsElapseFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class ThreadIdFormatItem : public FormatItem {
  public:
-  ThreadIdFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  ThreadIdFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
@@ -100,33 +101,33 @@ class StringFormatItem : public FormatItem {
 
 class NewLineFormatItem : public FormatItem {
  public:
-  NewLineFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  NewLineFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class LineNumFormatItem : public FormatItem {
  public:
-  LineNumFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  LineNumFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class FileNameFormatItem : public FormatItem {
  public:
-  FileNameFormatItem(const std::string& _str = "") : FormatItem(_str) {}
+  FileNameFormatItem() {}
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 };
 
 class TimeFormatItem : public FormatItem {
  public:
-  TimeFormatItem(const std::string& format = "%Y:%m:%D %H:%M:%S");
+  TimeFormatItem();
   virtual void format(std::ostream& out, LogLevel::Level level,
                       LogEvent::ptr event) override;
 
  private:
-  std::string time_format_;
+  std::string time_format_{"%Y:%m:%D %H:%M:%S"};
 };
 
 // class for formatting log string
@@ -143,6 +144,10 @@ class Formatter {
 
   std::string pattern_;
   std::vector<FormatItem::ptr> format_items_;
+  bool error_{false};
+
+  static const std::unordered_map<char, std::function<FormatItem::ptr()> >
+      format_item_maps_;
 };
 
 class Appender {

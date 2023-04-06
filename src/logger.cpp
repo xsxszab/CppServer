@@ -28,7 +28,7 @@ void Logger::SetName(const std::string& name) { name_ = name; }
 
 Logger::Logger(const std::string& name)
     : name_(name), level_(LogLevel::Level::INFO) {
-  formatter_.reset(new Formatter("%d [%p] %f %l %m %n "));
+  formatter_.reset(new Formatter("%d [%p] %f %l %m %n"));
 }
 
 void Logger::Log(LogLevel::Level level, LogEvent::ptr event) {
@@ -84,7 +84,9 @@ void Appender::SetFormatter(Formatter::ptr _formatter) {
   formatter_ = _formatter;
 }
 
-Formatter::Formatter(const std::string& pattern) : pattern_{pattern} {}
+Formatter::Formatter(const std::string& pattern) : pattern_{pattern} {
+  Parse();
+}
 
 std::string Formatter::format(LogLevel::Level level, LogEvent::ptr event) {
   std::stringstream ss;
@@ -94,132 +96,68 @@ std::string Formatter::format(LogLevel::Level level, LogEvent::ptr event) {
   return ss.str();
 }
 
+const std::unordered_map<char, std::function<FormatItem::ptr()> >
+    Formatter::format_item_maps_ = {
+        {'m', []() { return FormatItem::ptr(new MessageFormatItem()); }},
+        {'p', []() { return FormatItem::ptr(new LevelFormatItem()); }},
+        {'r', []() { return FormatItem::ptr(new MsElapseFormatItem()); }},
+        {'c', []() { return FormatItem::ptr(new FileNameFormatItem()); }},
+        {'t', []() { return FormatItem::ptr(new ThreadIdFormatItem()); }},
+        {'n', []() { return FormatItem::ptr(new NewLineFormatItem()); }},
+        {'d', []() { return FormatItem::ptr(new TimeFormatItem()); }},
+        {'f', []() { return FormatItem::ptr(new FileNameFormatItem()); }},
+        {'l', []() { return FormatItem::ptr(new LineNumFormatItem()); }},
+};
+
 void Formatter::Parse() {
-  // tuple(string, format, type)
-  std::vector<std::tuple<std::string, std::string, int> > vec;
   std::string nstr;
-  for (size_t i = 0; i < pattern_.size(); i++) {
+  size_t i = 0;
+  while (i < pattern_.size()) {
     if (pattern_[i] != '%') {
-      nstr += pattern_[i];
+      nstr += pattern_[i++];
       continue;
     }
 
-    if (i + 1 < pattern_.size()) {
-      if (pattern_[i + 1] == '%') {
-        nstr += '%';
-      }
-      i++;
+    if (i + 1 >= pattern_.size()) {
+      break;
+    }
+    if (pattern_[i + 1] == '%') {
+      nstr += '%';
+      i += 2;
       continue;
     }
-
-    size_t pos = i + 1;
-    int fmt_status = 0;
-    size_t fmt_begin = 0;
-    std::string str;
-    std::string fmt;
-    while (pos < pattern_.size()) {
-      if (pattern_[pos] == ' ') {
-        break;
-      }
-      if (fmt_status == 0) {
-        if (pattern_[pos] == '{') {
-          str = pattern_.substr(i + 1, pos - i - 1);
-          fmt_status = 1;
-          fmt_begin = pos;
-          pos++;
-          continue;
-        }
-      }
-      if (fmt_status == 1) {
-        if (pattern_[pos] == ')') {
-          fmt = pattern_.substr(fmt_begin + 1, pos - fmt_begin - 1);
-          fmt_status = 2;
-          break;
-        }
-      }
+    if (!nstr.empty()) {
+      format_items_.push_back(FormatItem::ptr(new StringFormatItem(nstr)));
+      nstr.clear();
     }
 
-    if (fmt_status == 0) {
-      if (!nstr.empty()) {
-        vec.push_back(std::make_tuple(nstr, "", 0));
-      }
-      str = pattern_.substr(i + 1, pos - i - 1);
-      vec.push_back(std::make_tuple(str, fmt, 1));
-      i = pos;
-    } else if (fmt_status == 1) {
-      std::cout << "invalid pattern string :" << pattern_ << std::endl;
-      vec.push_back(std::make_tuple("<format_error>", fmt, 0));
-    } else if (fmt_status == 2) {
-      if (!nstr.empty()) {
-        vec.push_back(std::make_tuple(nstr, "", 0));
-      }
-      vec.push_back(std::make_tuple(str, fmt, 1));
-      i = pos;
+    auto it = format_item_maps_.find(pattern_[i + 1]);
+    if (it != format_item_maps_.end()) {
+      format_items_.push_back(it->second());
+    } else {
+      format_items_.push_back(
+          FormatItem::ptr(new StringFormatItem("<wrong format>")));
+      error_ = true;
     }
+    i += 2;
   }
 
   if (!nstr.empty()) {
-    vec.push_back(std::make_tuple(nstr, "", 0));
-  }
-  static std::unordered_map<std::string,
-                            std::function<FormatItem::ptr(const std::string&)> >
-      s_format_items = {
-          {"m",
-           [](const std::string& format) {
-             return FormatItem::ptr(new MessageFormatItem(format));
-           }},
-          {"p",
-           [](const std::string& format) {
-             return FormatItem::ptr(new LevelFormatItem(format));
-           }},
-          {"r",
-           [](const std::string& format) {
-             return FormatItem::ptr(new MsElapseFormatItem(format));
-           }},
-          {"c",
-           [](const std::string& format) {
-             return FormatItem::ptr(new FileNameFormatItem(format));
-           }},
-          {"t",
-           [](const std::string& format) {
-             return FormatItem::ptr(new ThreadIdFormatItem(format));
-           }},
-          {"n",
-           [](const std::string& format) {
-             return FormatItem::ptr(new NewLineFormatItem(format));
-           }},
-          {"d",
-           [](const std::string& format) {
-             return FormatItem::ptr(new TimeFormatItem(format));
-           }},
-          {"f",
-           [](const std::string& format) {
-             return FormatItem::ptr(new FileNameFormatItem(format));
-           }},
-          {"l",
-           [](const std::string& format) {
-             return FormatItem::ptr(new LineNumFormatItem(format));
-           }},
-      };
-
-  for (auto& v : vec) {
-    if (std::get<2>(v) == 0) {
-      format_items_.push_back(
-          FormatItem::ptr(new StringFormatItem(std::get<0>(v))));
-
-    } else {
-      auto it = s_format_items.find(std::get<0>(v));
-      if (it == s_format_items.end()) {
-        format_items_.push_back(FormatItem::ptr(
-            new StringFormatItem("<format_error: %" + std::get<0>(v) + ">")));
-      } else {
-        format_items_.push_back(it->second(std::get<0>(v)));
-      }
-    }
+    format_items_.push_back(FormatItem::ptr(new StringFormatItem(nstr)));
   }
 }
 
-const char* LogEvent::GetFileName() const { return nullptr; }
+LogEvent::LogEvent(const char* file_name, int32_t line_num, uint32_t ms_elapse,
+                   uint32_t thread_id, uint64_t time,
+                   const std::string& message)
+    : file_name_{file_name},
+      line_num_{line_num},
+      ms_elapse_{ms_elapse},
+      thread_id_{thread_id},
+      time_{time},
+      msg_{message} {}
+
+const char* LogEvent::GetFileName() const { return file_name_; }
 
 int32_t LogEvent::GetLineNum() const { return line_num_; }
 
@@ -229,7 +167,7 @@ uint32_t LogEvent::GetThreadId() const { return thread_id_; }
 
 uint64_t LogEvent::GetTime() const { return time_; }
 
-std::string LogEvent::GetMessage() const { return message_; }
+const std::string& LogEvent::GetMessage() const { return msg_; }
 
 void MessageFormatItem::format(std::ostream& out, LogLevel::Level level,
                                LogEvent::ptr event) {
@@ -266,12 +204,12 @@ void LevelFormatItem::format(std::ostream& out, LogLevel::Level level,
 
 void MsElapseFormatItem::format(std::ostream& out, LogLevel::Level level,
                                 LogEvent::ptr event) {
-  out << event->GetMsElapse();
+  out << "ms" << event->GetMsElapse();
 }
 
 void ThreadIdFormatItem::format(std::ostream& out, LogLevel::Level level,
                                 LogEvent::ptr event) {
-  out << event->GetThreadId();
+  out << "id" << event->GetThreadId();
 }
 
 void LineNumFormatItem::format(std::ostream& out, LogLevel::Level level,
@@ -284,8 +222,7 @@ void FileNameFormatItem::format(std::ostream& out, LogLevel::Level level,
   out << event->GetFileName();
 }
 
-TimeFormatItem::TimeFormatItem(const std::string& format)
-    : time_format_(format) {}
+TimeFormatItem::TimeFormatItem() {}
 
 void TimeFormatItem::format(std::ostream& out, LogLevel::Level level,
                             LogEvent::ptr event) {
@@ -294,7 +231,7 @@ void TimeFormatItem::format(std::ostream& out, LogLevel::Level level,
 
 void NewLineFormatItem::format(std::ostream& out, LogLevel::Level level,
                                LogEvent::ptr event) {
-  out << '\n';
+  out << std::endl;
 }
 
 StringFormatItem::StringFormatItem(const std::string& _str) : str_{_str} {}
