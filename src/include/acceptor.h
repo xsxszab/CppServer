@@ -12,6 +12,7 @@ class Socket;
 class InetAddress;
 class Channel;
 
+// class for handling incoming TCP connections.
 class Acceptor {
  private:
   EventLoop* loop_;

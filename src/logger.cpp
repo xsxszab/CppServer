@@ -26,6 +26,12 @@ std::string Logger::GetName() const { return name_; }
 
 void Logger::SetName(const std::string& name) { name_ = name; }
 
+// Logger::ptr Logger::GetInstance() {
+//   static Logger logger;
+//   Logger::ptr log_ptr;
+//   log_ptr.reset(&logger);
+// }
+
 Logger::Logger(const std::string& name)
     : name_(name), level_(LogLevel::Level::INFO) {
   formatter_.reset(new Formatter("%d [%p] %f %l %m %n"));

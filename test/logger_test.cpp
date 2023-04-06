@@ -8,9 +8,7 @@ int main() {
   logger->AddAppender(
       std::shared_ptr<log::StdoutAppender>(new log::StdoutAppender()));
 
-  log::LogEvent::ptr event(
-      new log::LogEvent(__FILE__, __LINE__, 12, 34, 56, "debug message"));
-  logger->Log(log::LogLevel::Level::DEBUG, event);
+  LOG_INFO("test message")
 
   return 0;
 }

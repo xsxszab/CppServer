@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <chrono>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -8,11 +9,22 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
 
 namespace cppserver_logger {
+
+uint64_t getTimeStamp() {
+  std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>
+      tp = std::chrono::time_point_cast<std::chrono::milliseconds>(
+          std::chrono::system_clock::now());  // get current time
+  std::time_t timestamp =
+      tp.time_since_epoch()
+          .count();  // cale diff between now and 1970-1-1,00:00
+  return static_cast<uint64_t>(timestamp);
+}
 
 class Logger;
 
@@ -171,8 +183,6 @@ class StdoutAppender : public Appender {
   using ptr = std::shared_ptr<StdoutAppender>;
   virtual void Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
                    LogEvent::ptr event) override;
-
- private:
 };
 
 class FileAppender : public Appender {
@@ -194,6 +204,9 @@ class FileAppender : public Appender {
 class Logger : public std::enable_shared_from_this<Logger> {
  public:
   using ptr = std::shared_ptr<Logger>;
+
+  // // singleton
+  // static ptr GetInstance();
 
   Logger(const std::string& name = "empty_name");
   void Log(LogLevel::Level level, LogEvent::ptr event);
@@ -218,6 +231,11 @@ class Logger : public std::enable_shared_from_this<Logger> {
   std::list<Appender::ptr> appenders_;
   Formatter::ptr formatter_;  // default formatter
 };
+
+#define LOG_INFO(msg)                                                    \
+  log::LogEvent::ptr event(new log::LogEvent(                            \
+      __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+  logger->Log(log::LogLevel::Level::INFO, event);
 
 }  // namespace cppserver_logger
 
