@@ -40,7 +40,7 @@ Logger::Logger(const std::string& name)
 void Logger::Log(LogLevel::Level level, LogEvent::ptr event) {
   if (level >= level_) {
     for (auto& appender : appenders_) {
-      appender->Log(shared_from_this(), level, event);
+      appender->Log(level, event);
     }
   }
 }
@@ -55,24 +55,42 @@ void Logger::error(LogEvent::ptr event) { Log(LogLevel::ERROR, event); }
 
 void Logger::fatal(LogEvent::ptr event) { Log(LogLevel::FATAL, event); }
 
-void StdoutAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
-                         LogEvent::ptr event) {
+void StdoutAppender::Log(LogLevel::Level level, LogEvent::ptr event) {
   if (level >= level_) {
     std::cout << formatter_->format(level, event);
   }
 }
 
-FileAppender::FileAppender(const std::string& file_name)
-    : file_name_{file_name} {}
+FileAppender::FileAppender(const std::string& file_name, size_t max_queue_size)
+    : file_name_(file_name), max_queue_size_(max_queue_size) {
+  cppserver_core::Errif(max_queue_size_ == 0, "invalid queue size");
 
-void FileAppender::Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
-                       LogEvent::ptr event) {
-  if (level >= level_) {
-    file_stream_ << formatter_->format(level, event);
+  writer_thread_ = std::thread(&FileAppender::ConsumeLog, this);
+  // writer_thread_.detach();
+
+  file_stream_.open(file_name_);
+}
+
+FileAppender::~FileAppender() {
+  Log(LogLevel::Level::OTHER,
+      LogEvent::ptr());  // notify writer thread that logger has terminted
+  if (writer_thread_.joinable()) {
+    writer_thread_.join();
   }
+  file_stream_.close();
+}
+
+void FileAppender::Log(LogLevel::Level level, LogEvent::ptr event) {
+  std::unique_lock<std::mutex> lock(mtx_);
+  while (queue_.size() >= max_queue_size_) {
+    cv_not_full_.wait(lock);
+  }
+  queue_.push(std::make_pair(level, event));
+  cv_not_empty_.notify_one();
 }
 
 bool FileAppender::Reopen() {
+  std::lock_guard<std::mutex> lock(file_mtx_);
   if (file_stream_) {
     file_stream_.close();
   }
@@ -80,6 +98,36 @@ bool FileAppender::Reopen() {
   file_stream_.open(file_name_);
 
   return !!file_stream_;
+}
+
+void FileAppender::ConsumeLog() {
+  file_stream_ << "log start" << std::endl;
+  while (true) {
+    std::unique_lock<std::mutex> lock(mtx_);
+    while (queue_.empty()) {
+      cv_not_empty_.wait(lock);
+    }
+    auto event_pair = queue_.front();
+
+    queue_.pop();
+    cv_not_full_.notify_one();
+    lock.unlock();
+
+    auto level = event_pair.first;
+    if (level == LogLevel::Level::OTHER) {
+      break;
+    }
+    auto event = event_pair.second;
+
+    {
+      std::lock_guard<std::mutex> lock(file_mtx_);
+
+      if (level >= level_) {
+        file_stream_ << formatter_->format(level, event);
+      }
+    }
+  }
+  file_stream_ << "log end" << std::endl;
 }
 
 Appender::~Appender() {}
@@ -102,7 +150,7 @@ std::string Formatter::format(LogLevel::Level level, LogEvent::ptr event) {
   return ss.str();
 }
 
-const std::unordered_map<char, std::function<FormatItem::ptr()> >
+const std::unordered_map<char, std::function<FormatItem::ptr()>>
     Formatter::format_item_maps_ = {
         {'m', []() { return FormatItem::ptr(new MessageFormatItem()); }},
         {'p', []() { return FormatItem::ptr(new LevelFormatItem()); }},

@@ -12,10 +12,6 @@ namespace cppserver_core {
 class Channel;
 
 class Epoll {
- private:
-  int epfd_{-1};
-  struct epoll_event* events_{nullptr};
-
  public:
   Epoll();
   ~Epoll();
@@ -26,6 +22,10 @@ class Epoll {
   std::vector<Channel*> Poll(int timeout = -1);
 
   void UpdateChannel(Channel* channel);
+
+ private:
+  int epfd_{-1};
+  struct epoll_event* events_{nullptr};
 };
 
 }  // namespace cppserver_core

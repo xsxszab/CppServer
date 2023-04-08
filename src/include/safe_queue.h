@@ -1,22 +1,22 @@
 #ifndef SAFE_QUEUE_H
 #define SAFE_QUEUE_H
 
-namespace cppserver_core {
-
 #include <memory>
 #include <mutex>
 #include <queue>
 
 #include "utilfunc.h"
 
+namespace cppserver_core {
+
 // thread save queue
 template <class T>
-class BlockQueue {
+class SafeQueue {
  public:
   using guard = std::lock_guard<std::mutex>;
   using unique_lock = std::unique_lock<std::mutex>;
-  BlockQueue() = default;
-  ~BlockQueue() = default;
+  SafeQueue(int max_size) : max_size_(max_size) {}
+  ~SafeQueue() = default;
 
   void Clear() {}
 
@@ -51,6 +51,7 @@ class BlockQueue {
   }
 
  private:
+  int max_size_{0};
   std::queue<T> queue_;
   std::mutex mtx_;
 };

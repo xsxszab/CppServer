@@ -2,17 +2,21 @@
 #define LOGGER_H
 
 #include <chrono>
+#include <condition_variable>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <list>
 #include <memory>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <thread>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+
+#include "utilfunc.h"
 
 namespace cppserver_logger {
 
@@ -22,7 +26,7 @@ uint64_t getTimeStamp() {
           std::chrono::system_clock::now());  // get current time
   std::time_t timestamp =
       tp.time_since_epoch()
-          .count();  // cale diff between now and 1970-1-1,00:00
+          .count();  // calc diff between now and 1970-1-1,00:00
   return static_cast<uint64_t>(timestamp);
 }
 
@@ -36,6 +40,7 @@ class LogLevel {
     WARN = 3,
     ERROR = 4,
     FATAL = 5,
+    OTHER = 6,  // used by FileAppender exclusively
   };
 
   static const char* ToString(Level level);
@@ -158,7 +163,7 @@ class Formatter {
   std::vector<FormatItem::ptr> format_items_;
   bool error_{false};
 
-  static const std::unordered_map<char, std::function<FormatItem::ptr()> >
+  static const std::unordered_map<char, std::function<FormatItem::ptr()>>
       format_item_maps_;
 };
 
@@ -166,9 +171,9 @@ class Appender {
  public:
   using ptr = std::shared_ptr<Appender>;
 
+  Appender() = default;
   virtual ~Appender();
-  virtual void Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
-                   LogEvent::ptr event) = 0;
+  virtual void Log(LogLevel::Level level, LogEvent::ptr event) = 0;
 
   Formatter::ptr GetFormatter() const;
   void SetFormatter(Formatter::ptr _formatter);
@@ -178,30 +183,40 @@ class Appender {
   Formatter::ptr formatter_;
 };
 
+// directly print logs to stdout, sync
 class StdoutAppender : public Appender {
  public:
   using ptr = std::shared_ptr<StdoutAppender>;
-  virtual void Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
-                   LogEvent::ptr event) override;
+  virtual void Log(LogLevel::Level level, LogEvent::ptr event) override;
 };
 
+// print logs to file, async
 class FileAppender : public Appender {
  public:
-  FileAppender(const std::string& file_name);
+  FileAppender(const std::string& file_name, size_t max_queue_size);
+  ~FileAppender();
   using ptr = std::shared_ptr<FileAppender>;
-  virtual void Log(std::shared_ptr<Logger> logger, LogLevel::Level level,
-                   LogEvent::ptr event) override;
+  virtual void Log(LogLevel::Level level, LogEvent::ptr event) override;
 
   // if the file is already opened, close it and open again
   // success -> true, fail -> false
   bool Reopen();
 
  private:
+  void ConsumeLog();
+
   std::string file_name_;
   std::ofstream file_stream_;
+  std::queue<std::pair<LogLevel::Level, LogEvent::ptr>> queue_;
+  std::thread writer_thread_;
+  std::mutex mtx_;
+  std::mutex file_mtx_;
+  std::condition_variable cv_not_empty_;
+  std::condition_variable cv_not_full_;
+  size_t max_queue_size_{0};
 };
 
-class Logger : public std::enable_shared_from_this<Logger> {
+class Logger {
  public:
   using ptr = std::shared_ptr<Logger>;
 
@@ -232,10 +247,40 @@ class Logger : public std::enable_shared_from_this<Logger> {
   Formatter::ptr formatter_;  // default formatter
 };
 
-#define LOG_INFO(msg)                                                    \
-  log::LogEvent::ptr event(new log::LogEvent(                            \
-      __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
-  logger->Log(log::LogLevel::Level::INFO, event);
+#define LOG_INFO(msg)                                                      \
+  {                                                                        \
+    log::LogEvent::ptr event(new log::LogEvent(                            \
+        __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+    logger->Log(log::LogLevel::Level::INFO, event);                        \
+  }
+
+#define LOG_DEBUG(msg)                                                     \
+  {                                                                        \
+    log::LogEvent::ptr event(new log::LogEvent(                            \
+        __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+    logger->Log(log::LogLevel::Level::DEBUG, event);                       \
+  }
+
+#define LOG_WARN(msg)                                                      \
+  {                                                                        \
+    log::LogEvent::ptr event(new log::LogEvent(                            \
+        __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+    logger->Log(log::LogLevel::Level::WARN, event);                        \
+  }
+
+#define LOG_ERROR(msg)                                                     \
+  {                                                                        \
+    log::LogEvent::ptr event(new log::LogEvent(                            \
+        __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+    logger->Log(log::LogLevel::Level::ERROR, event);                       \
+  }
+
+#define LOG_FATAL(msg)                                                     \
+  {                                                                        \
+    log::LogEvent::ptr event(new log::LogEvent(                            \
+        __FILE__, __LINE__, 0, 0, cppserver_logger::getTimeStamp(), msg)); \
+    logger->Log(log::LogLevel::Level::FATAL, event);                       \
+  }
 
 }  // namespace cppserver_logger
 

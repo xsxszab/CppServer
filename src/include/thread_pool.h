@@ -15,14 +15,6 @@
 namespace cppserver_core {
 
 class ThreadPool {
- private:
-  std::vector<std::thread> threads_;
-  std::queue<std::function<void()>> task_queue_;
-  std::mutex tasks_mtx_;
-  std::condition_variable cv_;
-
-  bool stop_;
-
  public:
   explicit ThreadPool(int num_thread = 8);
   ~ThreadPool();
@@ -32,6 +24,14 @@ class ThreadPool {
   template <class F, class... Args>
   auto Add(F&& f, Args&&... args)
       -> std::future<typename std::result_of<F(Args...)>::type>;
+
+ private:
+  std::vector<std::thread> threads_;
+  std::queue<std::function<void()>> task_queue_;
+  std::mutex tasks_mtx_;
+  std::condition_variable cv_;
+
+  bool stop_;
 };
 
 // perfect forwarding thread functions
@@ -51,7 +51,8 @@ inline auto ThreadPool::Add(F&& f, Args&&... args)
 
     task_queue_.emplace([task]() { (*task)(); });
   }
-  cv_.notify_one();
+  cv_.notify_one();  // since one task has benn inserted into the queue, notify
+                     // one thread
   return res;
 }
 
