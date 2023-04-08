@@ -5,7 +5,7 @@
 namespace log = cppserver_logger;
 
 int main() {
-  log::Logger::ptr logger(new log::Logger("async_logger"));
+  log::Logger* logger = log::Logger::GetInstance();
   logger->SetLevel(log::LogLevel::Level::INFO);
   logger->AddAppender(std::shared_ptr<log::FileAppender>(
       new log::FileAppender("/home/xsxsz/cppserver/log/log.txt", 1000)));

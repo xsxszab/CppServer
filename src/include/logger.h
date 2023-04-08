@@ -220,8 +220,8 @@ class Logger {
  public:
   using ptr = std::shared_ptr<Logger>;
 
-  // // singleton
-  // static ptr GetInstance();
+  // singleton
+  static Logger* GetInstance();
 
   Logger(const std::string& name = "empty_name");
   void Log(LogLevel::Level level, LogEvent::ptr event);

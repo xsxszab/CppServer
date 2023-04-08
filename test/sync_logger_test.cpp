@@ -3,7 +3,7 @@
 namespace log = cppserver_logger;
 
 int main() {
-  log::Logger::ptr logger(new log::Logger("sync_logger"));
+  log::Logger* logger = log::Logger::GetInstance();
   logger->SetLevel(log::LogLevel::Level::INFO);
   logger->AddAppender(
       std::shared_ptr<log::StdoutAppender>(new log::StdoutAppender()));
