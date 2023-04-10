@@ -10,22 +10,16 @@
 namespace cppserver_core {
 
 Acceptor::Acceptor(EventLoop* loop) : loop_(loop) {
-  sock_ = new Socket();
-  auto* addr = new InetAddress("127.0.0.1", 8888);
-  sock_->Bind(addr);
+  sock_ = std::make_unique<Socket>();
+  sock_->Bind("127.0.0.1", 8888);
   // sock->setnonblocking();
   sock_->Listen();
-
-  channel_ = new Channel(loop_, sock_->GetFd());
+  channel_ = std::make_unique<Channel>(loop_, sock_->GetFd());
   channel_->SetReadCallBack(std::bind(&Acceptor::AcceptConnection, this));
   channel_->EnableRead();
-  delete addr;
 }
 
-Acceptor::~Acceptor() {
-  delete sock_;
-  delete channel_;
-}
+Acceptor::~Acceptor() {}
 
 void Acceptor::AcceptConnection() const {
   InetAddress* clnt_addr = new InetAddress();

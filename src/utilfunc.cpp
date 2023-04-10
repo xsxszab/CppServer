@@ -2,13 +2,13 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 
 namespace cppserver_core {
 
 void Errif(bool condition, const char* errmsg) {
   if (condition) {
-    perror(errmsg);
-    exit(EXIT_FAILURE);
+    throw std::runtime_error(errmsg);
   }
 }
 

@@ -35,6 +35,12 @@ void Socket::Bind(InetAddress* _addr) {
   _addr->SetAddr(addr, addr_len);
 }
 
+void Socket::Bind(const char* ip, uint16_t port) {
+  InetAddress* addr = new InetAddress(ip, port);
+  Bind(addr);
+  delete addr;
+}
+
 void Socket::Listen() {
   Errif(::listen(fd_, SOMAXCONN) == -1, "socket listen error");
 }

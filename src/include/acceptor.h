@@ -2,6 +2,7 @@
 #define ACCEPTOR_H
 
 #include <functional>
+#include <memory>
 
 #include "marcos.h"
 
@@ -14,13 +15,6 @@ class Channel;
 
 // class for handling incoming TCP connections.
 class Acceptor {
- private:
-  EventLoop* loop_;
-  Socket* sock_;
-  Channel* channel_;
-
-  std::function<void(int)> new_connection_callback_;
-
  public:
   explicit Acceptor(EventLoop* loop);
   ~Acceptor();
@@ -30,6 +24,13 @@ class Acceptor {
   void AcceptConnection() const;
 
   void SetNewConnectionCallBack(std::function<void(int)> const& func);
+
+ private:
+  EventLoop* loop_;
+  std::unique_ptr<Socket> sock_;
+  std::unique_ptr<Channel> channel_;
+
+  std::function<void(int)> new_connection_callback_;
 };
 
 }  // namespace cppserver_core

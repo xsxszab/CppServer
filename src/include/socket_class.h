@@ -22,6 +22,7 @@ class Socket {
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Socket)
 
   void Bind(InetAddress* _addr);
+  void Bind(const char* ip, uint16_t port);
   void Listen();
   void Setnonblocking();  // set O_NONBLOCK flag
 

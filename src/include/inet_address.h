@@ -3,12 +3,15 @@
 
 #include <arpa/inet.h>
 
+#include <memory>
+
 #include "marcos.h"
 
 namespace cppserver_core {
 
 class InetAddress {
  public:
+  using ptr = std::shared_ptr<InetAddress>;
   struct sockaddr_in addr_;
   socklen_t addr_len_;
 
