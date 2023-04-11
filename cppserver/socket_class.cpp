@@ -28,7 +28,7 @@ Socket::~Socket() {
   }
 }
 
-void Socket::Bind(InetAddress* _addr) {
+void Socket::Bind(std::shared_ptr<InetAddress> _addr) {
   struct sockaddr_in addr = _addr->GetAddr();
   socklen_t addr_len = _addr->GetAddrLen();
   Errif(::bind(fd_, (sockaddr*)&addr, addr_len) == -1, "socket bind error");
@@ -36,9 +36,8 @@ void Socket::Bind(InetAddress* _addr) {
 }
 
 void Socket::Bind(const char* ip, uint16_t port) {
-  InetAddress* addr = new InetAddress(ip, port);
+  auto addr = std::make_shared<InetAddress>(ip, port);
   Bind(addr);
-  delete addr;
 }
 
 void Socket::Listen() {

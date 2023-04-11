@@ -3,6 +3,8 @@
 
 #include <arpa/inet.h>
 
+#include <memory>
+
 #include "marcos.h"
 
 namespace cppserver_core {
@@ -21,7 +23,7 @@ class Socket {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Socket)
 
-  void Bind(InetAddress* _addr);
+  void Bind(std::shared_ptr<InetAddress> _addr);
   void Bind(const char* ip, uint16_t port);
   void Listen();
   void Setnonblocking();  // set O_NONBLOCK flag

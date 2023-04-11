@@ -19,9 +19,10 @@
 
 namespace cppserver_core {
 
-Server::Server() : acceptor_(nullptr) {
+Server::Server(const char* ip, uint16_t port) : acceptor_(nullptr) {
+  address_ = std::make_shared<InetAddress>(ip, port);
   main_reactor_ = std::make_unique<EventLoop>();
-  acceptor_ = std::make_unique<Acceptor>(main_reactor_.get());
+  acceptor_ = std::make_unique<Acceptor>(main_reactor_.get(), address_);
   acceptor_->SetNewConnectionCallBack(
       std::bind(&Server::NewConnection, this, std::placeholders::_1));
 

@@ -58,7 +58,7 @@ else ()
 endif()
 
 string(CONCAT FORMAT_DIRS
-        "${CMAKE_SOURCE_DIR}/src,"
+        "${CMAKE_SOURCE_DIR}/cppserver,"
         "${CMAKE_SOURCE_DIR}/test,")
 
 add_custom_target(format ${CMAKE_SOURCE_DIR}/scripts/run_clang_format.py
@@ -110,8 +110,8 @@ add_custom_target(clang-tidy ${CMAKE_SOURCE_DIR}/scripts/run_clang_tidy.py
 # *****************************
 
 
-include_directories(${CMAKE_SOURCE_DIR}/src/include)
+include_directories(${CMAKE_SOURCE_DIR}/cppserver/include)
 
 
-add_subdirectory(./src)
+add_subdirectory(./cppserver)
 add_subdirectory(./test)

@@ -16,7 +16,7 @@ class Channel;
 // class for handling incoming TCP connections.
 class Acceptor {
  public:
-  explicit Acceptor(EventLoop* loop);
+  explicit Acceptor(EventLoop* loop, std::shared_ptr<InetAddress> addr);
   ~Acceptor();
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(Acceptor)

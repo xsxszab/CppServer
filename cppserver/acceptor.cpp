@@ -9,9 +9,10 @@
 
 namespace cppserver_core {
 
-Acceptor::Acceptor(EventLoop* loop) : loop_(loop) {
+Acceptor::Acceptor(EventLoop* loop, std::shared_ptr<InetAddress> addr)
+    : loop_(loop) {
   sock_ = std::make_unique<Socket>();
-  sock_->Bind("127.0.0.1", 8888);
+  sock_->Bind(addr);
   // sock->setnonblocking();
   sock_->Listen();
   channel_ = std::make_unique<Channel>(loop_, sock_->GetFd());
