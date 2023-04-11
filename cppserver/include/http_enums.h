@@ -125,12 +125,6 @@ enum HttpStatus {
 #undef XX
 };
 
-HttpMethod CharsToHttpMethod(const char* str);
-const char* HttpMethodToString(HttpMethod method);
-
-HttpStatus CharsToHttpStatus(const char* str);
-const char* HttpStatusToString(HttpStatus status);
-
 }  // namespace cppserver_http
 
 #endif

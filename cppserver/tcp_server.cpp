@@ -27,7 +27,7 @@ Server::Server(const char* ip, uint16_t port) : acceptor_(nullptr) {
       std::bind(&Server::NewConnection, this, std::placeholders::_1));
 
   int num_threads = std::thread::hardware_concurrency();
-  std::cout << "thread pool size: " << num_threads << std::endl;
+  // std::cout << "thread pool size: " << num_threads << std::endl;
   threadpool_ = std::make_unique<ThreadPool>(num_threads);
 
   for (int i = 0; i < num_threads; i++) {

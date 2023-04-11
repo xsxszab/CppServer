@@ -7,6 +7,7 @@
 #include "connection.h"
 #include "epoll_class.h"
 #include "event_loop.h"
+#include "http_class.h"
 #include "inet_address.h"
 #include "logger.h"
 #include "socket_class.h"

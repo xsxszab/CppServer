@@ -18,6 +18,8 @@ ssize_t Buffer::Size() const { return buf_.size(); }
 
 const char* Buffer::Cstr() const { return buf_.c_str(); }
 
+char& Buffer::operator[](int i) { return buf_[i]; }
+
 void Buffer::Append(const char* _str) { buf_.append(_str); }
 
 void Buffer::Append(const char* _str, int _size) {
@@ -34,7 +36,7 @@ void Buffer::SetBuf(const char* _str) {
   buf_.append(_str);
 }
 
-const std::string& Buffer::GetBuf() { return buf_; }
+std::string& Buffer::GetBuf() { return buf_; }
 
 void Buffer::ClearBuffer() { buf_.clear(); }
 

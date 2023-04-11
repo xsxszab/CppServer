@@ -1,6 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include <memory>
 #include <string>
 
 #include "marcos.h"
@@ -8,10 +9,8 @@
 namespace cppserver_core {
 
 class Buffer {
- private:
-  std::string buf_;
-
  public:
+  using ptr = std::shared_ptr<Buffer>;
   explicit Buffer();
   ~Buffer();
 
@@ -22,11 +21,16 @@ class Buffer {
   void Append(const char* _str, int _size);
 
   void SetBuf(const char* _str);
-  const std::string& GetBuf();
+  std::string& GetBuf();
   const char* Cstr() const;
+
+  char& operator[](int i);
 
   void ClearBuffer();
   void GetLine();  // get one line from stdin input
+
+ private:
+  std::string buf_;
 };
 
 }  // namespace cppserver_core
