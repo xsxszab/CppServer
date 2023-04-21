@@ -1,5 +1,19 @@
-### A simple webserver written in cpp
-This project is still in progress, i.e., it may contain lots of bugs.
+### Project Description
+
+A lightweight multithreaded TCP server based on the reactor pattern. Currently this project is still in progress.
+
+
+### Requirements
+* GCC 7.5
+* cmake
+* WebBench (for server stress test)
+
+### Features
+* handles requests using the master-slave reactor multithreading model.
+* uses a thread pool for better concurrency performance.
+* priority queue-based timer (in progress).
+* http request parseing & response (partially implemented)
+* support asynchronous logging.
 
 
 ### References
