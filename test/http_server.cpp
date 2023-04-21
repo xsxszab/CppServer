@@ -12,7 +12,7 @@ int main() {
   stream << "HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: "
             "text\r\n\r\n";
 
-  const char* path = "/home/xsxsz/cppserver/html/index.html";
+  const char* path = "../../html/index.html";
 
   std::ifstream t(path);
   stream << t.rdbuf();
