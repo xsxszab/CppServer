@@ -193,7 +193,7 @@ class StdoutAppender : public Appender {
 // print logs to file, async
 class FileAppender : public Appender {
  public:
-  FileAppender(const std::string& file_name, size_t max_queue_size);
+  FileAppender(const std::string& file_name, size_t max_queue_size = 1024);
   ~FileAppender();
   using ptr = std::shared_ptr<FileAppender>;
   virtual void Log(LogLevel::Level level, LogEvent::ptr event) override;

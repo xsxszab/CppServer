@@ -44,7 +44,7 @@ inline auto ThreadPool::Add(F&& f, Args&&... args)
 
   std::future<return_type> res = task->get_future();
   {
-    std::unique_lock<std::mutex> lock(tasks_mtx_);
+    std::lock_guard<std::mutex> lock(tasks_mtx_);
     if (stop_) {
       throw std::runtime_error("thread pool already stopped\n");
     }

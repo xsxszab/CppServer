@@ -9,6 +9,7 @@ This project is still in progress.
 ### Requirements
 * GCC 7.5
 * cmake
+* clang-format & clang-tidy
 * WebBench (for server stress test)
 
 ### Features
@@ -34,6 +35,10 @@ make echo_single_client
 make echo_multi_clients
 make http_server
 ```
+
+Tested on:
+ Ubuntu 16.04
+ CentOS 7
 
 
 ### References

@@ -29,16 +29,17 @@ class Server {
 
   void NewConnection(int fd);
   void DeleteConnection(int fd);
-  void OnConnect(std::function<void(Connection*)> func);
-  void OnMessage(std::function<void(Connection*)> func);
-  void NewConnect(std::function<void(Connection*)> func);
+
+  void SetOnConnectCallback(std::function<void(Connection*)> func);
+  void SetOnMessageCallback(std::function<void(Connection*)> func);
+  void SetNewConnectCallback(std::function<void(Connection*)> func);
 
  private:
-  std::unique_ptr<EventLoop> main_reactor_;
+  std::unique_ptr<EventLoop> main_reactor_;  // master reactor
   std::unique_ptr<Acceptor> acceptor_;
   std::unique_ptr<ThreadPool> threadpool_;
 
-  std::vector<EventLoop*> sub_reactors_;
+  std::vector<EventLoop*> sub_reactors_;  // slave reactors
   std::unordered_map<int, Connection*> connections_;
 
   std::function<void(Connection*)> on_connection_callback_;

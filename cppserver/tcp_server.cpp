@@ -80,15 +80,15 @@ void Server::DeleteConnection(int fd) {
   }
 }
 
-void Server::OnConnect(std::function<void(Connection*)> func) {
+void Server::SetOnConnectCallback(std::function<void(Connection*)> func) {
   on_connection_callback_ = std::move(func);
 }
 
-void Server::OnMessage(std::function<void(Connection*)> func) {
+void Server::SetOnMessageCallback(std::function<void(Connection*)> func) {
   on_message_callback_ = std::move(func);
 }
 
-void Server::NewConnect(std::function<void(Connection*)> func) {
+void Server::SetNewConnectCallback(std::function<void(Connection*)> func) {
   on_message_callback_ = std::move(func);
 }
 

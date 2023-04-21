@@ -21,7 +21,10 @@ class EventLoop {
 
   DISABLE_COPY_AND_MOVE_CONSTRUCT(EventLoop)
 
+  // start epoll_wait and handle returned events (wrapped in channels)
   void Loop();
+
+  // add channel to epoll or update channel information
   void UpdateChannel(Channel* channel);
 };
 

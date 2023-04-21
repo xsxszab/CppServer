@@ -25,9 +25,10 @@ Acceptor::~Acceptor() {}
 void Acceptor::AcceptConnection() const {
   InetAddress* clnt_addr = new InetAddress();
   Socket* clnt_sock = new Socket(sock_->Accept(clnt_addr));
-  std::cout << "new client fd: " << clnt_sock->GetFd()
-            << " IP: " << inet_ntoa(clnt_addr->GetAddr().sin_addr)
-            << " Port: " << ntohs(clnt_addr->GetAddr().sin_port) << std::endl;
+  // std::cout << "new client fd: " << clnt_sock->GetFd()
+  //           << " IP: " << inet_ntoa(clnt_addr->GetAddr().sin_addr)
+  //           << " Port: " << ntohs(clnt_addr->GetAddr().sin_port) <<
+  //           std::endl;
   clnt_sock->Setnonblocking();
   new_connection_callback_(clnt_sock->GetFd());
   delete clnt_addr;

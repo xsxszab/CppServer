@@ -21,7 +21,7 @@ Connection::Connection(EventLoop* loop, int fd) {
   if (loop != nullptr) {  // bind to a event loop
     channel_ = std::make_unique<Channel>(loop, sock_->GetFd());
     channel_->EnableRead();
-    channel_->UseET();
+    channel_->UseET();  // set epoll to edge trigger mode
   }
 
   read_buffer_ = std::make_unique<Buffer>();
@@ -70,10 +70,10 @@ void Connection::SetOnConnectCallBack(
 void Connection::SetOnMessageCallBack(
     std::function<void(Connection*)> const& func) {
   on_message_callback_ = func;
-  channel_->SetReadCallBack(std::bind(&Connection::Business, this));
+  channel_->SetReadCallBack(std::bind(&Connection::BusinessLogic, this));
 }
 
-void Connection::Business() {
+void Connection::BusinessLogic() {
   Read();
   on_message_callback_(this);
 }
@@ -96,7 +96,7 @@ void Connection::ReadNonBlocking() {
     if (bytes_read > 0) {
       read_buffer_->Append(buf, bytes_read);
     } else if (bytes_read == -1 && errno == EINTR) {
-      std::cout << "continue reading" << std::endl;
+      // std::cout << "continue reading" << std::endl;
       continue;
     } else if (bytes_read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
       // std::cout << "finish reading" << std::endl;
@@ -106,7 +106,7 @@ void Connection::ReadNonBlocking() {
       state_ = State::Closed;
       break;
     } else {
-      std::cout << "other error happened" << std::endl;
+      // std::cout << "other error happened" << std::endl;
       state_ = State::Closed;
       break;
     }

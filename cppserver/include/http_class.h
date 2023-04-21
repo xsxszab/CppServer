@@ -52,6 +52,7 @@ class HttpParser {
   LineStatus ParseLine();
   HttpCode ParseRequestLine();
   HttpCode ParseHeader();
+  HttpCode Parsecontent();
 
   std::shared_ptr<cppserver_core::Buffer> buf_;
   int index_{0};

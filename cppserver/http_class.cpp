@@ -31,4 +31,6 @@ HttpCode HttpParser::ParseRequestLine() {}
 
 HttpCode HttpParser::ParseHeader() {}
 
+HttpCode HttpParser::Parsecontent() {}
+
 }  // namespace cppserver_http

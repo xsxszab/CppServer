@@ -36,10 +36,10 @@ class Connection {
   void SetDeleteConnectionCallBack(std::function<void(int)> const& func);
   void SetOnConnectCallBack(std::function<void(Connection*)> const& func);
   void SetOnMessageCallBack(std::function<void(Connection*)> const& func);
-  void Business();
+  void BusinessLogic();
 
   State GetState();
-  void Close();
+  void Close();  // close managed TCP connection
 
   Buffer* GetReadBuffer() const;
   const char* ReadBuffer();

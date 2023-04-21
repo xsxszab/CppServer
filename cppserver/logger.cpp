@@ -37,6 +37,7 @@ Logger::Logger(const std::string& name)
 }
 
 void Logger::Log(LogLevel::Level level, LogEvent::ptr event) {
+  // std::cout << "write log" << std::endl;
   if (level >= level_) {
     for (auto& appender : appenders_) {
       appender->Log(level, event);
