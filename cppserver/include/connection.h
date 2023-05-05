@@ -17,6 +17,8 @@ class Buffer;
 // one Connection instance corresponds to one TCP connection.
 class Connection {
  public:
+  using ptr = std::shared_ptr<Connection>;
+
   enum State {
     Invalid = 1,
     HandShaking = 2,

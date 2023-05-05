@@ -6,7 +6,7 @@ namespace core = cppserver_core;
 
 int main() {
   core::Socket* sock = new core::Socket();
-  sock->Connect("127.0.0.1", 8888);
+  sock->Connect("127.0.0.1", 8000);
 
   core::Connection* conn = new core::Connection(nullptr, sock->GetFd());
   while (true) {

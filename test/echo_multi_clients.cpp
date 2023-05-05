@@ -12,7 +12,7 @@ void ClientFunc(int num_msgs, int sleep_seconds, int thread_id) {
   sleep(sleep_seconds);
 
   core::Socket* sock = new core::Socket();
-  sock->Connect("127.0.0.1", 8888);
+  sock->Connect("127.0.0.1", 8000);
   core::Connection* conn = new core::Connection(nullptr, sock->GetFd());
 
   for (int i = 0; i < num_msgs; i++) {

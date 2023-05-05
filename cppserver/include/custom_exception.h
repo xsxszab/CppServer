@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+namespace cppserver_core {
+
 class Exception : std::exception {
  public:
   Exception(std::string what);
@@ -14,5 +16,7 @@ class Exception : std::exception {
  private:
   std::string message_;
 };
+
+}  // namespace cppserver_core
 
 #endif
