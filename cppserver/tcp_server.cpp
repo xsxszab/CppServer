@@ -56,15 +56,19 @@ void Server::NewConnection(int fd) {
   // randomly assign new connection to sub reactors.
   // TODO: write better dispatching logic
   int rand_choice = fd % sub_reactors_.size();
-  Connection* conn = new Connection(sub_reactors_[rand_choice], fd);
-
+  std::unique_ptr<Connection> conn =
+      std::make_unique<Connection>(sub_reactors_[rand_choice], fd);
   // std::cout << "init new connection, register callback functions" <<
   // std::endl;
   conn->SetDeleteConnectionCallBack(
       std::bind(&Server::DeleteConnection, this, std::placeholders::_1));
   // conn->setOnConnectCallBack(on_connection_callback);
   conn->SetOnMessageCallBack(on_message_callback_);
-  connections_[fd] = conn;
+  connections_[fd] = std::move(conn);
+
+  if (on_connection_callback_) {
+    on_connection_callback_(connections_[fd].get());
+  }
 }
 
 void Server::DeleteConnection(int fd) {
@@ -72,10 +76,7 @@ void Server::DeleteConnection(int fd) {
   if (fd != -1) {
     auto it = connections_.find(fd);
     if (it != connections_.end()) {
-      Connection* conn = connections_[fd];
       connections_.erase(fd);
-      delete conn;
-      conn = nullptr;
     }
   }
 }
@@ -89,7 +90,7 @@ void Server::SetOnMessageCallback(std::function<void(Connection*)> func) {
 }
 
 void Server::SetNewConnectCallback(std::function<void(Connection*)> func) {
-  on_message_callback_ = std::move(func);
+  new_connection_callback_ = std::move(func);
 }
 
 }  // namespace cppserver_core

@@ -18,7 +18,6 @@ int main() {
   server->SetNewConnectCallback([&logger](core::Connection* conn) {
     std::cout << "new connection fd: " << conn->GetSocket()->GetFd()
               << std::endl;
-
     std::string msg =
         "new connection fd: " + std::to_string(conn->GetSocket()->GetFd());
     LOG_INFO(msg)

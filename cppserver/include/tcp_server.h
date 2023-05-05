@@ -40,7 +40,7 @@ class Server {
   std::unique_ptr<ThreadPool> threadpool_;
 
   std::vector<EventLoop*> sub_reactors_;  // slave reactors
-  std::unordered_map<int, Connection*> connections_;
+  std::unordered_map<int, std::unique_ptr<Connection>> connections_;
 
   std::function<void(Connection*)> on_connection_callback_;
   std::function<void(Connection*)> new_connection_callback_;
