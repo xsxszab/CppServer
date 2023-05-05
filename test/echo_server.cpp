@@ -15,22 +15,24 @@ int main() {
 
   auto server = std::make_unique<core::Server>("0.0.0.0", 8000);
 
-  server->SetNewConnectCallback([&logger](core::Connection* conn) {
-    std::cout << "new connection fd: " << conn->GetSocket()->GetFd()
-              << std::endl;
-    std::string msg =
-        "new connection fd: " + std::to_string(conn->GetSocket()->GetFd());
-    LOG_INFO(msg)
-  });
+  server->SetOnConnectCallback(
+      [&logger](std::shared_ptr<core::Connection> conn) {
+        std::cout << "new connection fd: " << conn->GetSocket()->GetFd()
+                  << std::endl;
+        std::string msg =
+            "new connection fd: " + std::to_string(conn->GetSocket()->GetFd());
+        LOG_INFO(msg)
+      });
 
-  server->SetOnMessageCallback([&logger](core::Connection* conn) {
-    std::cout << "message from client: " << conn->ReadBuffer() << std::endl;
-    LOG_INFO("read from client")
-    if (conn->GetState() == core::Connection::State::Connected) {
-      conn->SetWriteBuffer(conn->ReadBuffer());
-      conn->Write();
-    }
-  });
+  server->SetOnMessageCallback(
+      [&logger](std::shared_ptr<core::Connection> conn) {
+        std::cout << "message from client: " << conn->ReadBuffer() << std::endl;
+        LOG_INFO("read from client")
+        if (conn->GetState() == core::Connection::State::Connected) {
+          conn->SetWriteBuffer(conn->ReadBuffer());
+          conn->Write();
+        }
+      });
 
   LOG_INFO("server start")
   server->Start();

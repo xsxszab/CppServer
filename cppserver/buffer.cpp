@@ -5,7 +5,7 @@
 
 namespace cppserver_core {
 
-Buffer::Buffer() = default;
+Buffer::Buffer() : idx_(0) {}
 
 Buffer::~Buffer() = default;
 
@@ -13,6 +13,12 @@ void Buffer::GetLine() {
   ClearBuffer();
   std::getline(std::cin, buf_);
 }
+
+int Buffer::GetIdx() { return idx_; }
+
+void Buffer::SetIdx(int idx) { idx_ = idx; }
+
+void Buffer::IncrementIdx(int step) { idx_ += step; }
 
 ssize_t Buffer::Size() const { return buf_.size(); }
 

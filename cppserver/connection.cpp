@@ -63,19 +63,19 @@ void Connection::SetDeleteConnectionCallBack(
 }
 
 void Connection::SetOnConnectCallBack(
-    std::function<void(Connection*)> const& func) {
+    std::function<void(std::shared_ptr<Connection>)> const& func) {
   on_connect_callback_ = func;
 }
 
 void Connection::SetOnMessageCallBack(
-    std::function<void(Connection*)> const& func) {
+    std::function<void(std::shared_ptr<Connection>)> const& func) {
   on_message_callback_ = func;
   channel_->SetReadCallBack(std::bind(&Connection::BusinessLogic, this));
 }
 
 void Connection::BusinessLogic() {
   Read();
-  on_message_callback_(this);
+  on_message_callback_(shared_from_this());
 }
 
 Connection::State Connection::GetState() { return state_; }
@@ -173,11 +173,11 @@ void Connection::WriteBlocking() {
   }
 }
 
-Buffer* Connection::GetReadBuffer() const { return read_buffer_.get(); }
+Buffer* Connection::GetReadBuffer() { return read_buffer_.get(); }
 
 const char* Connection::ReadBuffer() { return read_buffer_->Cstr(); }
 
-Buffer* Connection::GetWriteBuffer() const { return write_buffer_.get(); }
+Buffer* Connection::GetWriteBuffer() { return write_buffer_.get(); }
 
 const char* Connection::WriteBuffer() { return write_buffer_->Cstr(); }
 

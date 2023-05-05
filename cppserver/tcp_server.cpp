@@ -67,7 +67,7 @@ void Server::NewConnection(int fd) {
   connections_[fd] = std::move(conn);
 
   if (on_connection_callback_) {
-    on_connection_callback_(connections_[fd].get());
+    on_connection_callback_(connections_[fd]);
   }
 }
 
@@ -81,16 +81,14 @@ void Server::DeleteConnection(int fd) {
   }
 }
 
-void Server::SetOnConnectCallback(std::function<void(Connection*)> func) {
+void Server::SetOnConnectCallback(
+    std::function<void(std::shared_ptr<Connection>)> func) {
   on_connection_callback_ = std::move(func);
 }
 
-void Server::SetOnMessageCallback(std::function<void(Connection*)> func) {
+void Server::SetOnMessageCallback(
+    std::function<void(std::shared_ptr<Connection>)> func) {
   on_message_callback_ = std::move(func);
-}
-
-void Server::SetNewConnectCallback(std::function<void(Connection*)> func) {
-  new_connection_callback_ = std::move(func);
 }
 
 }  // namespace cppserver_core

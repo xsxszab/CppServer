@@ -29,8 +29,13 @@ class Buffer {
   void ClearBuffer();
   void GetLine();  // get one line from stdin input
 
+  int GetIdx();
+  void SetIdx(int idx);
+  void IncrementIdx(int step = 1);
+
  private:
   std::string buf_;
+  int idx_;
 };
 
 }  // namespace cppserver_core

@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <memory>
-#include <sstream>
 #include <unordered_map>
 
 namespace cppserver_core {
@@ -91,19 +90,13 @@ enum ProcessState {
   STATE_FINISH
 };
 
-enum URIState {
-  PARSE_URI_AGAIN = 1,
-  PARSE_URI_ERROR,
-  PARSE_URI_SUCCESS,
-};
+enum URIState { PARSE_URI_SUCCESS = 1, PARSE_URI_ERROR };
 
-enum HeaderState {
-  PARSE_HEADER_SUCCESS = 1,
-  PARSE_HEADER_AGAIN,
-  PARSE_HEADER_ERROR
-};
+enum HeaderState { PARSE_HEADER_SUCCESS = 1, PARSE_HEADER_ERROR };
 
 enum AnalysisState { ANALYSIS_SUCCESS = 1, ANALYSIS_ERROR };
+
+enum ParseResult { PARSE_SUCCESS = 1, PARSE_ERROR };
 
 enum ParseState {
   H_START = 0,
@@ -144,8 +137,8 @@ class HttpParser : std::enable_shared_from_this<HttpParser> {
   ~HttpParser();
   void Reset();
 
-  void handleClose();
-  void newEvent();
+  void HandleRequest();
+  void HandleClose();
 
  private:
   std::shared_ptr<cppserver_core::Connection> connection_;
@@ -163,21 +156,24 @@ class HttpParser : std::enable_shared_from_this<HttpParser> {
 
   std::unordered_map<std::string, std::string> headers_;
 
-  void handleRead();
-  void handleWrite();
-  void handleConn();
-  void handleError(int fd, int err_num, std::string short_msg);
-  URIState parseURI();
-  HeaderState parseHeaders();
-  AnalysisState analysisRequest();
+  ParseResult ParseRequest();
+  URIState ParseURI();
+  HeaderState ParseHeaders();
+  AnalysisState AnalysisRequest();
+
+  void HandleError(int error_num, std::string msg);
 };
 
+// class for managing http connections
 class HttpManager {
  public:
   HttpManager() = default;
   ~HttpManager() = default;
 
-  void HandleConnection(std::shared_ptr<cppserver_core::Connection> conn);
+  // void HandleConnection(std::shared_ptr<cppserver_core::Connection> conn);
+  void OnConnection(std::shared_ptr<cppserver_core::Connection> conn);
+  void OnMessage(std::shared_ptr<cppserver_core::Connection> conn);
+
   HttpParser::ptr GetParser(std::shared_ptr<cppserver_core::Connection> conn);
 
  private:

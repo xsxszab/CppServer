@@ -19,13 +19,15 @@ int main() {
 
   http::HttpManager http_manager;
 
-  server->SetNewConnectCallback([&logger](core::Connection* conn) {
+  server->SetOnConnectCallback(
+      [&logger, &http_manager](std::shared_ptr<core::Connection> conn) {
+        http_manager.OnConnection(conn);
+      });
 
-  });
-
-  server->SetOnMessageCallback([](core::Connection* conn) {
-
-  });
+  server->SetOnMessageCallback(
+      [&http_manager](std::shared_ptr<core::Connection> conn) {
+        http_manager.OnMessage(conn);
+      });
 
   server->Start();
 

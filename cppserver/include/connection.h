@@ -15,7 +15,7 @@ class Buffer;
 
 // class respobsible for handling TCP connections.
 // one Connection instance corresponds to one TCP connection.
-class Connection {
+class Connection : public std::enable_shared_from_this<Connection> {
  public:
   using ptr = std::shared_ptr<Connection>;
 
@@ -36,16 +36,18 @@ class Connection {
   void Write();
 
   void SetDeleteConnectionCallBack(std::function<void(int)> const& func);
-  void SetOnConnectCallBack(std::function<void(Connection*)> const& func);
-  void SetOnMessageCallBack(std::function<void(Connection*)> const& func);
+  void SetOnConnectCallBack(
+      std::function<void(std::shared_ptr<Connection>)> const& func);
+  void SetOnMessageCallBack(
+      std::function<void(std::shared_ptr<Connection>)> const& func);
   void BusinessLogic();
 
   State GetState();
   void Close();  // close managed TCP connection
 
-  Buffer* GetReadBuffer() const;
+  Buffer* GetReadBuffer();
   const char* ReadBuffer();
-  Buffer* GetWriteBuffer() const;
+  Buffer* GetWriteBuffer();
   const char* WriteBuffer();
   void SetWriteBuffer(const char* str);
   void GetLineWriteBuffer();
@@ -58,8 +60,8 @@ class Connection {
   std::unique_ptr<Socket> sock_;
   std::unique_ptr<Channel> channel_;
   std::function<void(int)> delete_connection_callback_;
-  std::function<void(Connection*)> on_connect_callback_;
-  std::function<void(Connection*)> on_message_callback_;
+  std::function<void(std::shared_ptr<Connection>)> on_connect_callback_;
+  std::function<void(std::shared_ptr<Connection>)> on_message_callback_;
   State state_{State::Invalid};
 
   void ReadNonBlocking();
